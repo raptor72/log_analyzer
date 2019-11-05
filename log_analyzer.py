@@ -3,6 +3,7 @@
 import os
 import re
 from collections import namedtuple
+import gzip
 
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
@@ -22,10 +23,29 @@ for file in files:
      if m is not None:
          if file > last:
              last = file
-#         print(os.path.abspath(last))
+#             print(last)
              date = file.split("-")[-1].split(".")[0]
-print(date)
-print(namedtuple('lastlog' , 'color mileage'))
+#             path = os.path.abspath(last)
+             path = str(os.path.abspath(config["LOG_DIR"])) + "/"  + last
+#             path = str(os.listdir(config["LOG_DIR"])) + last
+             extension = "gz" if last.split(".")[-1] == "gz" else ""
+
+#print(last)
+#print(date)
+#print(path)
+#print(extension)
+
+Lastlog = namedtuple('Lastlog', 'date path extension')
+my_log = Lastlog(date, path, extension)
+
+print(*my_log)
+
+
+open = open if my_log.extension == "" else gzip.open
+with open(my_log.path, 'r+', encoding='utf-8') as log:
+    for line in log.readlines():
+        print(line)
+log.close()
 
 
 def main():
