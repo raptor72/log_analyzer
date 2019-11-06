@@ -55,12 +55,39 @@ def get_lines(file):
         yield(line)
 
 
+def get_statistics(parsedlines):
+    for parsedline in parsedlines:
+        if d.get(parsedline[0]) is None:
+            i = 1
+            d.update( {parsedline[0] : (parsedline[1], i)} )
+        else:
+#            print(d.get(parsedline[0]))
+            payload = d.get(parsedline[0])
+#            print(payload)
+            newpayload = (float(payload[1]) + float(parsedline[1]), int(payload[1]) + 1)
+            d[parsedline[0]] = newpayload
+    yield d
+#    return d
+
 
 lines = get_lines(my_log)
 parsed = parse_line(lines)
+dicted = get_statistics(parsed)
 
-for par in parsed:
-    print(par)
+
+#d = dict()
+#for par in parsed:
+#    print(get_statistics(par))
+
+
+
+d = dict()
+
+for dic in dicted:
+    print(dic)
+
+print(len(dic))
+
 
 def main():
     pass
