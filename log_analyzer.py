@@ -19,7 +19,7 @@ config = {
 files = os.listdir(config["LOG_DIR"])
 last = ""
 for file in files:
-     m = re.match('^\D*-\d{8}($|.gz$)', file)
+     m = re.match('^nginx-access-ui.log-\d{8}($|.gz$)', file)
      if m is not None:
          if file > last:
              last = file
@@ -30,23 +30,37 @@ for file in files:
 #             path = str(os.listdir(config["LOG_DIR"])) + last
              extension = "gz" if last.split(".")[-1] == "gz" else ""
 
-#print(last)
-#print(date)
-#print(path)
-#print(extension)
+
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
 my_log = Lastlog(date, path, extension)
 
 print(*my_log)
 
+def parse_line(strings):
+    for string in strings:
+        url = string.split('"')[1]
+        time = string.split(" ")[-1].replace("\n","")
+        yield url, time
 
-open = open if my_log.extension == "" else gzip.open
-with open(my_log.path, 'r+', encoding='utf-8') as log:
-    for line in log.readlines():
-        print(line)
-log.close()
 
+def get_lines(file):
+#    open = open if file.extension == "" else gzip.open
+
+    if file.extension == "gz":
+        log = gzip.open(file.path, 'rb')
+    else:
+        log = open(file.path, 'r+', encoding='utf-8')
+    for line in log:
+        yield(line)
+
+
+
+lines = get_lines(my_log)
+parsed = parse_line(lines)
+
+for par in parsed:
+    print(par)
 
 def main():
     pass
