@@ -84,9 +84,14 @@ dicted = get_statistics(parsed)
 d = dict()
 
 for dic in dicted:
-    print(dic)
-
+#    print(dic)
+    pass
 print(len(dic))
+
+
+with open("report.txt", "w") as report:
+    for i in dic:
+        report.write(i + " " + str(dic[i]) + '\n')
 
 
 def main():
