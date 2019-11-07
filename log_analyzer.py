@@ -39,8 +39,8 @@ print(*my_log)
 
 def parse_line(strings):
     for string in strings:
-        url = string.split('"')[1]
-        time = string.split(" ")[-1].replace("\n","")
+        url = str(string).split('"')[1]
+        time = str(string).split(" ")[-1].replace("\n","").replace("\\n'", "")
         yield url, time
 
 
@@ -48,23 +48,46 @@ def get_lines(file):
 #    open = open if file.extension == "" else gzip.open
 
     if file.extension == "gz":
-        log = gzip.open(file.path, 'rb')
+        log = gzip.open(file.path, 'r+')
     else:
         log = open(file.path, 'r+', encoding='utf-8')
     for line in log:
         yield(line)
 
+def r2(number):
+    return round(number, 2)
+
 
 def get_statistics(parsedlines):
+    all_count = 0
+    all_time = 0.0
+    count_perc = 0.0
+    time_perc = 0.0
+    time_avg = 0.0
+    time_max = 0.0
+    time_med = 0.0
     for parsedline in parsedlines:
+        all_count += 1
+        all_time += float(parsedline[1])
         if d.get(parsedline[0]) is None:
-            i = 1
-            d.update( {parsedline[0] : (parsedline[1], i)} )
+
+            direct_count = 1
+#            d.update( {parsedline[0] : (parsedline[1], count)} )
+                                       #count           #count_perc          #time_sum         #time_perc             #time_avg          time_max
+            d.update({parsedline[0]: (direct_count, r2(direct_count/all_count), parsedline[1], r2(float(parsedline[1])/all_time),  r2(all_time/all_count), parsedline[1], time_med )})
         else:
-#            print(d.get(parsedline[0]))
             payload = d.get(parsedline[0])
-#            print(payload)
-            newpayload = (float(payload[1]) + float(parsedline[1]), int(payload[1]) + 1)
+            direct_count = payload[0] + 1
+            count_perc = r2(payload[1])
+            time_sum = r2(float(payload[2]) + float(parsedline[1]))
+            time_perc = r2(time_sum/all_time)
+            time_avg = r2(time_sum/direct_count)
+            if payload[5] > parsedline[1]:
+                time_max = payload[5]
+            else:
+                time_max = parsedline[1]
+#            newpayload = (float(payload[1]) + float(parsedline[1]), int(payload[1]) + 1)
+            newpayload = (direct_count, count_perc, time_sum, time_perc, time_avg, time_max, time_med)
             d[parsedline[0]] = newpayload
     yield d
 #    return d
@@ -84,8 +107,8 @@ dicted = get_statistics(parsed)
 d = dict()
 
 for dic in dicted:
-#    print(dic)
-    pass
+    print(dic)
+#    pass
 print(len(dic))
 
 
