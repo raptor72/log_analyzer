@@ -2,7 +2,7 @@
 
 import os
 import re
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 import gzip
 
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
@@ -67,15 +67,15 @@ def get_statistics(parsedlines):
     time_max = 0.0
     time_med = 0.0
     for parsedline in parsedlines:
-        all_count += 1
-        all_time += float(parsedline[1])
-        if d.get(parsedline[0]) is None:
 
+        all_count += 1
+        all_time += r2(float(parsedline[1]))
+        if d.get(parsedline[0]) is None:
+            time_pack = []
             direct_count = 1
-#            d.update( {parsedline[0] : (parsedline[1], count)} )
-                                       #count           #count_perc          #time_sum         #time_perc             #time_avg          time_max
-            d.update({parsedline[0]: (direct_count, r2(direct_count/all_count), r2(float(parsedline[1])), r2(float(parsedline[1])/all_time),
-                                      r2(all_time/all_count), r2(float(parsedline[1])), time_med,  all_count)})
+            time_pack.append(r2(float(parsedline[1])))
+            d.update({parsedline[0]: [direct_count, r2(direct_count/all_count), r2(all_time/all_count), r2(float(parsedline[1])),
+                                      time_med, r2(float(parsedline[1])/all_time), r2(float(parsedline[1])), all_count, time_pack]})
         else:
             payload = d.get(parsedline[0])
             direct_count = payload[0] + 1
@@ -83,16 +83,43 @@ def get_statistics(parsedlines):
             time_sum = r2(float(payload[2]) + float(parsedline[1]))
             time_perc = r2(time_sum/all_time)
             time_avg = r2(time_sum/direct_count)
+            time_pack = payload[8]
+            time_pack.append(r2(float(parsedline[1])))
             if payload[5] > r2(float(parsedline[1])):
                 time_max = r2(float(payload[5]))
             else:
                 time_max = r2(float(parsedline[1]))
-            newpayload = (direct_count, count_perc, time_sum, time_perc, time_avg, time_max, time_med, all_count)
+            newpayload = [direct_count, count_perc, time_avg, time_max, time_med, time_perc, time_sum, all_count, time_pack]
             d[parsedline[0]] = newpayload
-
     yield d
-#    return d
 
+
+def mediana(data):
+    smass = sorted(data)
+    if len(data) % 2 == 0:
+        mid1 = (int(len(sorted(data)) / 2))
+        mid2 = (int(len(sorted(data)) / 2) - 1)
+        result = (smass[mid1] + smass[mid2]) / 2
+    else:
+        mid = (int(len(sorted(data)) / 2))
+        result = smass[mid]
+    return result
+
+def handle_dict(d):
+    all_count = len(d)
+    for i in d.keys():
+        pay = d[i]
+        direct_count = pay[0]
+        count_perc = r2(direct_count / all_count)
+        time_row = pay.pop()
+        time_med = r2(mediana(time_row))
+        pay[1] = count_perc
+        pay[6] = time_med
+        d[i] = pay
+
+#    list_d = list(d.items())
+#    list_d.sort(key = lambda i: i[1][2])
+    return d
 
 lines = get_lines(my_log)
 parsed = parse_line(lines)
@@ -112,10 +139,16 @@ for dic in dicted:
 #    pass
 print(len(dic))
 
+#d1 = OrderedDict(sorted(dic.items()))
+
+print(d1)
+
+
+d1 = handle_dict(dic)
 
 with open("report.txt", "w") as report:
-    for i in dic:
-        report.write(i + " " + str(dic[i]) + '\n')
+    for i in d1:
+        report.write(i + " " + str(d1[i]) + '\n')
 
 
 def main():
