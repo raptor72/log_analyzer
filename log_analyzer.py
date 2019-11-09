@@ -23,11 +23,8 @@ for file in files:
      if m is not None:
          if file > last:
              last = file
-#             print(last)
              date = file.split("-")[-1].split(".")[0]
-#             path = os.path.abspath(last)
              path = str(os.path.abspath(config["LOG_DIR"])) + "/"  + last
-#             path = str(os.listdir(config["LOG_DIR"])) + last
              extension = "gz" if last.split(".")[-1] == "gz" else ""
 
 
@@ -45,8 +42,6 @@ def parse_line(strings):
 
 
 def get_lines(file):
-#    open = open if file.extension == "" else gzip.open
-
     if file.extension == "gz":
         log = gzip.open(file.path, 'r+')
     else:
@@ -106,6 +101,11 @@ def mediana(data):
     return result
 
 def handle_dict(d):
+    res = []
+
+    def keyFunk(item):
+        return item[6]
+
     all_count = len(d)
     for i in d.keys():
         pay = d[i]
@@ -117,18 +117,15 @@ def handle_dict(d):
         pay[6] = time_med
         d[i] = pay
 
-#    list_d = list(d.items())
-#    list_d.sort(key = lambda i: i[1][2])
+#    for i, j in d.items():
+#        res.append([i, *j])
+
+#    return res.sort(key=keyFunk)
     return d
 
 lines = get_lines(my_log)
 parsed = parse_line(lines)
 dicted = get_statistics(parsed)
-
-
-#d = dict()
-#for par in parsed:
-#    print(get_statistics(par))
 
 
 
@@ -138,10 +135,6 @@ for dic in dicted:
     print(dic)
 #    pass
 print(len(dic))
-
-#d1 = OrderedDict(sorted(dic.items()))
-
-print(d1)
 
 
 d1 = handle_dict(dic)
