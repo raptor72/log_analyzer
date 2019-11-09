@@ -74,21 +74,22 @@ def get_statistics(parsedlines):
             direct_count = 1
 #            d.update( {parsedline[0] : (parsedline[1], count)} )
                                        #count           #count_perc          #time_sum         #time_perc             #time_avg          time_max
-            d.update({parsedline[0]: (direct_count, r2(direct_count/all_count), parsedline[1], r2(float(parsedline[1])/all_time),  r2(all_time/all_count), parsedline[1], time_med )})
+            d.update({parsedline[0]: (direct_count, r2(direct_count/all_count), r2(float(parsedline[1])), r2(float(parsedline[1])/all_time),
+                                      r2(all_time/all_count), r2(float(parsedline[1])), time_med,  all_count)})
         else:
             payload = d.get(parsedline[0])
             direct_count = payload[0] + 1
-            count_perc = r2(payload[1])
+            count_perc = r2(direct_count/all_count)
             time_sum = r2(float(payload[2]) + float(parsedline[1]))
             time_perc = r2(time_sum/all_time)
             time_avg = r2(time_sum/direct_count)
-            if payload[5] > parsedline[1]:
-                time_max = payload[5]
+            if payload[5] > r2(float(parsedline[1])):
+                time_max = r2(float(payload[5]))
             else:
-                time_max = parsedline[1]
-#            newpayload = (float(payload[1]) + float(parsedline[1]), int(payload[1]) + 1)
-            newpayload = (direct_count, count_perc, time_sum, time_perc, time_avg, time_max, time_med)
+                time_max = r2(float(parsedline[1]))
+            newpayload = (direct_count, count_perc, time_sum, time_perc, time_avg, time_max, time_med, all_count)
             d[parsedline[0]] = newpayload
+
     yield d
 #    return d
 
