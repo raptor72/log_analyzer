@@ -102,10 +102,6 @@ def mediana(data):
 
 def handle_dict(d):
     res = []
-
-    def keyFunk(item):
-        return item[6]
-
     all_count = len(d)
     for i in d.keys():
         pay = d[i]
@@ -116,12 +112,10 @@ def handle_dict(d):
         pay[1] = count_perc
         pay[6] = time_med
         d[i] = pay
-
-#    for i, j in d.items():
-#        res.append([i, *j])
-
-#    return res.sort(key=keyFunk)
-    return d
+    for i, j in d.items():
+        res.append( [i, *j])
+    h = sorted(res, key=lambda x: x[7], reverse = True)
+    return h
 
 lines = get_lines(my_log)
 parsed = parse_line(lines)
@@ -138,11 +132,12 @@ print(len(dic))
 
 
 d1 = handle_dict(dic)
+print(d1)
 
 with open("report.txt", "w") as report:
     for i in d1:
-        report.write(i + " " + str(d1[i]) + '\n')
-
+#        report.write(i + " " + str(d1[i]) + '\n')
+        report.write( str(i) + '\n')
 
 def main():
     pass
