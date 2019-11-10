@@ -40,6 +40,7 @@ for i in d.keys():
 
 print(d)
 
+
 res = []
 for i,j in d.items():
     print(i)
@@ -48,12 +49,14 @@ for i,j in d.items():
 
 print(res)
 
-def keyFunk(item):
-    return item[1]
 
 
-res.sort(key=keyFunk)
+res =[['GET /api/v2/banner/25019354 HTTP/1.1', 1, 0.0, 0.39, 0.39, 0.0, 1.0, 0.39, 1], ['GET /api/1/photogenic_banners/list/?server_name=WIN7RB4 HTTP/1.1', 5, 0.0, 0.04, 0.14, 0.0, 0.0, 0.14, 4175]]
 
+
+h= sorted(res, key= lambda x : x[6])
+
+print(h)
 
 
 
