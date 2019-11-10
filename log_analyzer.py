@@ -11,7 +11,7 @@ import gzip
 #                     '$request_time';
 
 config = {
-    "REPORT_SIZE": 1000,
+    "REPORT_SIZE": 100,
     "REPORT_DIR": "./reports",
     "LOG_DIR": "./log"
 }
@@ -26,7 +26,6 @@ for file in files:
              date = file.split("-")[-1].split(".")[0]
              path = str(os.path.abspath(config["LOG_DIR"])) + "/"  + last
              extension = "gz" if last.split(".")[-1] == "gz" else ""
-
 
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
@@ -50,7 +49,7 @@ def get_lines(file):
         yield(line)
 
 def r2(number):
-    return round(number, 2)
+    return round(number, 3)
 
 
 def get_statistics(parsedlines):
@@ -113,7 +112,10 @@ def handle_dict(d):
         pay[6] = time_med
         d[i] = pay
     for i, j in d.items():
-        res.append( [i, *j])
+        if j[6] < float(config["REPORT_SIZE"]):
+            continue
+        else:
+            res.append( [i, *j])
     h = sorted(res, key=lambda x: x[7], reverse = True)
     return h
 
@@ -136,6 +138,7 @@ print(d1)
 
 with open("report.txt", "w") as report:
     for i in d1:
+        i = str(i).replace("[", "").replace("]", "")
 #        report.write(i + " " + str(d1[i]) + '\n')
         report.write( str(i) + '\n')
 
