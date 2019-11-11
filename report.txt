@@ -1,6 +1,0 @@
-{'count': 3, 'count_perc': 0.001, 'time_avg': 30.221, 'time_max': 60.132, 'time_med': 0.0, 'time_perc': 0.028, 'time_sum': 60.224, 'url': 'GET /api/v2/internal/gpmd_plan_report/queue/?wait=1m&worker=5 HTTP/1.1'}
-{'count': 2, 'count_perc': 0.0, 'time_avg': 30.501, 'time_max': 60.175, 'time_med': 0.0, 'time_perc': 0.026, 'time_sum': 60.174, 'url': 'GET /api/v2/internal/gpmd_plan_report/queue/?wait=1m&worker=2 HTTP/1.1'}
-{'count': 2, 'count_perc': 0.0, 'time_avg': 30.449, 'time_max': 60.118, 'time_med': 0.0, 'time_perc': 0.027, 'time_sum': 60.162, 'url': 'GET /api/v2/internal/gpmd_plan_report/queue/?wait=1m&worker=1 HTTP/1.1'}
-{'count': 2, 'count_perc': 0.0, 'time_avg': 30.477, 'time_max': 60.136, 'time_med': 0.0, 'time_perc': 0.021, 'time_sum': 60.135, 'url': 'GET /api/v2/internal/gpmd_plan_report/queue/?wait=1m&worker=3 HTTP/1.1'}
-{'count': 2, 'count_perc': 0.0, 'time_avg': 30.501, 'time_max': 60.126, 'time_med': 0.0, 'time_perc': 0.025, 'time_sum': 60.117, 'url': 'GET /api/v2/internal/gpmd_plan_report/queue/?wait=1m&worker=4 HTTP/1.1'}
-{'count': 5, 'count_perc': 0.001, 'time_avg': 16.539, 'time_max': 60.127, 'time_med': 0.0, 'time_perc': 0.024, 'time_sum': 60.087, 'url': 'GET /api/v2/internal/html5/phantomjs/queue/?wait=1m HTTP/1.1'}

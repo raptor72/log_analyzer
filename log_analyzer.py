@@ -11,7 +11,7 @@ import gzip
 #                     '$request_time';
 
 config = {
-    "REPORT_SIZE": 40,
+    "REPORT_SIZE": 1,
     "REPORT_DIR": "./reports",
     "LOG_DIR": "./log"
 }
@@ -68,24 +68,24 @@ def get_statistics(parsedlines):
             time_pack = []
             direct_count = 1
             time_pack.append(r2(float(parsedline[1])))
-            d.update({parsedline[0]: [direct_count, r2(direct_count/all_count), r2(all_time/all_count), r2(float(parsedline[1])),
-                                      time_med, r2(float(parsedline[1])/all_time), r2(float(parsedline[1])), all_count, time_pack]})
+                                       #count              #time_avg            #time_max
+            d.update({parsedline[0]: [direct_count, r2(float(parsedline[1])), r2(float(parsedline[1])),
+                                     #time_sum
+                                      r2(float(parsedline[1])), all_count, time_pack]})
         else:
             payload = d.get(parsedline[0])
             direct_count = payload[0] + 1
-            count_perc = r2(direct_count/all_count)
-            time_sum = r2(float(payload[2]) + float(parsedline[1]))
-            time_perc = r2(time_sum/all_time)
+            time_sum = r2(float(payload[3]) + float(parsedline[1]))
             time_avg = r2(time_sum/direct_count)
-            time_pack = payload[8]
+            time_pack = payload[5]
             time_pack.append(r2(float(parsedline[1])))
-            if payload[5] > r2(float(parsedline[1])):
-                time_max = r2(float(payload[5]))
+            if payload[2] > r2(float(parsedline[1])):
+                time_max = r2(float(payload[2]))
             else:
                 time_max = r2(float(parsedline[1]))
-            newpayload = [direct_count, count_perc, time_avg, time_max, time_med, time_perc, time_sum, all_count, time_pack]
+            newpayload = [direct_count, time_avg, time_max, time_sum, all_count, time_pack]
             d[parsedline[0]] = newpayload
-    yield d
+    yield d, all_time
 
 
 def mediana(data):
@@ -99,29 +99,33 @@ def mediana(data):
         result = smass[mid]
     return result
 
-def handle_dict(d):
+def handle_dict(d, all_time):
     res = []
     other = []
-#    replacement = {direct_count, count_perc, time_avg, time_max, time_med, time_perc, time_sum, all_count, url}
+#    replacement = {direct_count, time_avg, time_max, time_sum, all_count, url}
     all_count = len(d)
     for i in d.keys():
         pay = d[i]
         direct_count = pay[0]
         count_perc = r2(direct_count / all_count)
         time_row = pay.pop()
+        pay.pop()
         time_med = r2(mediana(time_row))
-        pay[1] = count_perc
-        pay[6] = time_med
+        time_perc = r2(pay[3]/all_time)
+        pay.append(count_perc)
+        pay.append(time_med)
+        pay.append(time_perc)
         d[i] = pay
     for i, j in d.items():
-        if j[6] < float(config["REPORT_SIZE"]):
+        if j[3] < float(config["REPORT_SIZE"]):
             continue
         else:
             res.append( [i, *j])
-    h = sorted(res, key=lambda x: x[7], reverse = True)
-    for i in h:
-        other.append( {"count" : i[1], "count_perc": i[2], "time_avg": i[3], "time_max":i[4], "time_med": i[5], "time_perc": i[6],
-                       "time_sum": i[7], "url": i[0]  }  )
+    h = sorted(res, key=lambda x: x[3], reverse = True)
+    for k in h:
+#        print(k)
+        other.append( {"count" : k[1], "count_perc": k[5], "time_avg": k[3], "time_max":k[4], "time_med": k[6], "time_perc": k[7],
+                       "time_sum": k[4], "url": k[0]  }  )
 #    return h
     return other
 
@@ -135,24 +139,31 @@ d = dict()
 for dic in dicted:
     print(dic)
 #    pass
+all_time = dic[1]
+print(all_time)
 print(len(dic))
 
 
-d1 = handle_dict(dic)
-print(d1[0:5])
 
-with open("report", "r") as report:
+d1 = handle_dict(dic[0], dic[1])
+print(d1)
+
+with open("report.html", "r") as report:
     data = report.read()
 
-data = data.replace("$replacement", str(d1))
+data = data.replace("$table_json", str(d1))
 
-with open("report", "w") as report:
+reportname = "report" + my_log.date + ".html"
+#print(reportname)
+
+with open(reportname, "w") as report:
     report.write(data)
 
+
 #with open("report.txt", "w") as report:
-#    for i in d1:
-#    i = str(i).replace("[", "").replace("]", "")
-#    report.write( str(i) + '\n')
+#    for i in dic:
+#        i = str(i).replace("[", "").replace("]", "")
+#        report.write(i + " " + str(dic[i]) + '\n')
 
 
 def main():
