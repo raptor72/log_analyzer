@@ -130,7 +130,6 @@ parsed = parse_line(lines)
 dicted = get_statistics(parsed)
 
 
-
 d = dict()
 
 for dic in dicted:
@@ -142,11 +141,19 @@ print(len(dic))
 d1 = handle_dict(dic)
 print(d1[0:5])
 
-with open("report.txt", "w") as report:
-    for i in d1:
-        i = str(i).replace("[", "").replace("]", "")
-#        report.write(i + " " + str(d1[i]) + '\n')
-        report.write( str(i) + '\n')
+with open("report", "r") as report:
+    data = report.read()
+
+data = data.replace("$replacement", str(d1))
+
+with open("report", "w") as report:
+    report.write(data)
+
+#with open("report.txt", "w") as report:
+#    for i in d1:
+#    i = str(i).replace("[", "").replace("]", "")
+#    report.write( str(i) + '\n')
+
 
 def main():
     pass
