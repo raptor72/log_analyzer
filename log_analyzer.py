@@ -11,7 +11,7 @@ import gzip
 #                     '$request_time';
 
 config = {
-    "REPORT_SIZE": 100,
+    "REPORT_SIZE": 40,
     "REPORT_DIR": "./reports",
     "LOG_DIR": "./log"
 }
@@ -101,6 +101,8 @@ def mediana(data):
 
 def handle_dict(d):
     res = []
+    other = []
+#    replacement = {direct_count, count_perc, time_avg, time_max, time_med, time_perc, time_sum, all_count, url}
     all_count = len(d)
     for i in d.keys():
         pay = d[i]
@@ -117,7 +119,11 @@ def handle_dict(d):
         else:
             res.append( [i, *j])
     h = sorted(res, key=lambda x: x[7], reverse = True)
-    return h
+    for i in h:
+        other.append( {"count" : i[1], "count_perc": i[2], "time_avg": i[3], "time_max":i[4], "time_med": i[5], "time_perc": i[6],
+                       "time_sum": i[7], "url": i[0]  }  )
+#    return h
+    return other
 
 lines = get_lines(my_log)
 parsed = parse_line(lines)
@@ -134,7 +140,7 @@ print(len(dic))
 
 
 d1 = handle_dict(dic)
-print(d1)
+print(d1[0:5])
 
 with open("report.txt", "w") as report:
     for i in d1:
