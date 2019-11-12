@@ -1,1 +1,7 @@
+INFO:root:script started at
+INFO:root:use external config
+INFO:root:resule config is {'REPORT_SIZE': 10, 'REPORT_DIR': './reports', 'LOG_DIR': './log'}
 INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:script done at
