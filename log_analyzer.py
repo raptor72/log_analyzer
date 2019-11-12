@@ -6,6 +6,10 @@ from collections import namedtuple, OrderedDict
 import gzip
 import sys
 import json
+import logging
+
+logging.basicConfig(filename="log_analyzer.log", level=logging.INFO)
+
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
 #                     '"$http_user_agent" "$http_x_forwarded_for" "$http_X_REQUEST_ID" "$http_X_RB_USER" '
@@ -27,21 +31,24 @@ def get_external_config():
             config["REPORT_SIZE"] = external_settings["REPORT_SIZE"]
             config["REPORT_DIR"] = external_settings["REPORT_DIR"]
             config["LOG_DIR"] = external_settings["LOG_DIR"]
-#        print(config)
-
-
+            logging.info("use external config")
+        else:
+            logging.info("use default config")
+        logging.info(f"resule config is {config}")
 
 
 files = os.listdir(config["LOG_DIR"])
 last = ""
 for file in files:
-     m = re.match('^nginx-access-ui.log-\d{8}($|.gz$)', file)
-     if m is not None:
-         if file > last:
-             last = file
-             date = file.split("-")[-1].split(".")[0]
-             path = str(os.path.abspath(config["LOG_DIR"])) + "/"  + last
-             extension = "gz" if last.split(".")[-1] == "gz" else ""
+    m = re.match('^nginx-access-ui.log-\d{8}($|.gz$)', file)
+    if m is not None:
+        if file > last:
+            last = file
+            date = file.split("-")[-1].split(".")[0]
+            path = str(os.path.abspath(config["LOG_DIR"])) + "/"  + last
+            extension = "gz" if last.split(".")[-1] == "gz" else ""
+logging.info(f"choised log file is {last}")
+#logging.info("no log files matched")
 
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
@@ -149,6 +156,7 @@ reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
 print(reportfile)
 
 
+
 if os.path.exists(reportfile):
     print("Report alredy created")
     sys.exit(1)
@@ -175,7 +183,9 @@ else:
 
 
 def main():
+    logging.info("script started at")
     get_external_config()
+    logging.info("script done at")
 #    pass
 
 if __name__ == "__main__":
