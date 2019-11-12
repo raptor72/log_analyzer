@@ -35,7 +35,7 @@ def get_external_config():
         else:
             logging.info("use default config")
         logging.info(f"resule config is {config}")
-
+    return config
 
 def get_last_log(logdir):
     files = os.listdir(logdir)
@@ -79,6 +79,7 @@ def r2(number):
 
 
 def get_statistics(parsedlines):
+    d = dict()
     all_count = 0
     all_time = 0.0
     count_perc = 0.0
@@ -156,12 +157,12 @@ def handle_dict(d, all_time):
 
 def main():
     logging.info("script started at")
-    get_external_config()
+    config = get_external_config()
 
     my_log = get_last_log(config["LOG_DIR"])
     reportname = "report" + my_log.date + ".html"
     reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
-#    print(reportfile)
+    logging.info(f"reportfile is {reportfile}")
 
     if os.path.exists(reportfile):
         print("Report alredy created")
@@ -170,7 +171,6 @@ def main():
         lines = get_lines(my_log)
         parsed = parse_line(lines)
         dicted = get_statistics(parsed)
-        d = dict()
 
         for dic in dicted:
             print(dic)
