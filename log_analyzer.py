@@ -23,10 +23,12 @@ def get_external_config():
     if external_config:
         if os.path.exists(external_config):
             with open(external_config, 'r') as conf:
-                settings = json.load(conf)
-            print(settings)
-            REPORT_SIZE = settings["REPORT_SIZE"]
-            print(REPORT_SIZE)
+                external_settings = json.load(conf)
+            config["REPORT_SIZE"] = external_settings["REPORT_SIZE"]
+            config["REPORT_DIR"] = external_settings["REPORT_DIR"]
+            config["LOG_DIR"] = external_settings["LOG_DIR"]
+#        print(config)
+
 
 
 
@@ -145,6 +147,7 @@ def handle_dict(d, all_time):
 reportname = "report" + my_log.date + ".html"
 reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
 print(reportfile)
+
 
 if os.path.exists(reportfile):
     print("Report alredy created")
