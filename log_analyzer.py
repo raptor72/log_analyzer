@@ -4,6 +4,7 @@ import os
 import re
 from collections import namedtuple, OrderedDict
 import gzip
+import sys
 
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
@@ -107,11 +108,11 @@ def handle_dict(d, all_time):
     for i in d.keys():
         pay = d[i]
         direct_count = pay[0]
-        count_perc = r2(direct_count / all_count)
+        count_perc = r2(direct_count / all_count * 100)
         time_row = pay.pop()
         pay.pop()
         time_med = r2(mediana(time_row))
-        time_perc = r2(pay[3]/all_time)
+        time_perc = r2(pay[3]/all_time * 100)
         pay.append(count_perc)
         pay.append(time_med)
         pay.append(time_perc)
@@ -123,47 +124,38 @@ def handle_dict(d, all_time):
             res.append( [i, *j])
     h = sorted(res, key=lambda x: x[3], reverse = True)
     for k in h:
-#        print(k)
         other.append( {"count" : k[1], "count_perc": k[5], "time_avg": k[3], "time_max":k[4], "time_med": k[6], "time_perc": k[7],
                        "time_sum": k[4], "url": k[0]  }  )
-#    return h
     return other
 
-lines = get_lines(my_log)
-parsed = parse_line(lines)
-dicted = get_statistics(parsed)
-
-
-d = dict()
-
-for dic in dicted:
-    print(dic)
-#    pass
-all_time = dic[1]
-print(all_time)
-print(len(dic))
-
-
-
-d1 = handle_dict(dic[0], dic[1])
-print(d1)
-
-with open("report.html", "r") as report:
-    data = report.read()
-
-data = data.replace("$table_json", str(d1))
 
 reportname = "report" + my_log.date + ".html"
-#print(reportname)
+reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
+print(reportfile)
 
-with open(reportname, "w") as report:
-    report.write(data)
+if os.path.exists(reportfile):
+    print("Report alredy created")
+    sys.exit(1)
+else:
+    lines = get_lines(my_log)
+    parsed = parse_line(lines)
+    dicted = get_statistics(parsed)
+    d = dict()
 
+    for dic in dicted:
+        print(dic)
+#        pass
+    all_time = dic[1]
+    d1 = handle_dict(dic[0], dic[1])
 
-#with open("report.txt", "w") as report:
-#    for i in dic:
-#        i = str(i).replace("[", "").replace("]", "")
-#        report.write(i + " " + str(dic[i]) + '\n')
+    with open("report.html", "r") as report:
+        data = report.read()
+
+    data = data.replace("$table_json", str(d1))
+
+    with open(reportfile, "w") as report:
+        report.write(data)
+
 
 
 def main():
