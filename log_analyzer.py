@@ -5,7 +5,7 @@ import re
 from collections import namedtuple, OrderedDict
 import gzip
 import sys
-
+import json
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
 #                     '"$http_user_agent" "$http_x_forwarded_for" "$http_X_REQUEST_ID" "$http_X_RB_USER" '
@@ -16,6 +16,19 @@ config = {
     "REPORT_DIR": "./reports",
     "LOG_DIR": "./log"
 }
+
+
+def get_external_config():
+    external_config = sys.argv[1]
+    if external_config:
+        if os.path.exists(external_config):
+            with open(external_config, 'r') as conf:
+                settings = json.load(conf)
+            print(settings)
+            REPORT_SIZE = settings["REPORT_SIZE"]
+            print(REPORT_SIZE)
+
+
 
 files = os.listdir(config["LOG_DIR"])
 last = ""
@@ -159,7 +172,8 @@ else:
 
 
 def main():
-    pass
+    get_external_config()
+#    pass
 
 if __name__ == "__main__":
     main()
