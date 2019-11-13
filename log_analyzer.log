@@ -15,3 +15,48 @@ INFO:root:no log files matched
 INFO:root:pring Lastlog(date='20191104', path='/home/maksim/Desktop/corrupt/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
 INFO:root:reportfile is /home/maksim/Desktop/corrupt/log_analyzer/reports/report20191104.html
 INFO:root:script done at 2019-11-12 22:46:46.233675
+INFO:root:script started at 2019-11-13 08:46:30.440142
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script started at 2019-11-13 08:46:45.875097
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script done at 2019-11-13 08:46:45.993254
+INFO:root:script started at 2019-11-13 09:15:32.761665
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script started at 2019-11-13 09:19:09.337843
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script done at 2019-11-13 09:19:09.445365
+INFO:root:script started at 2019-11-13 09:20:20.317695
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script started at 2019-11-13 09:20:26.602439
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script done at 2019-11-13 09:20:26.931073
+INFO:root:script started at 2019-11-13 09:43:28.293422
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script done at 2019-11-13 09:43:28.593848
+INFO:root:script started at 2019-11-13 09:43:52.932800
+INFO:root:choised log file is nginx-access-ui.log-20191104
+INFO:root:no log files matched
+INFO:root:pring Lastlog(date='20191104', path='/root/log_analyzer/log/nginx-access-ui.log-20191104', extension='') 
+INFO:root:reportfile is /root/log_analyzer/reports/report20191104.html
+INFO:root:script done at 2019-11-13 09:43:53.010701

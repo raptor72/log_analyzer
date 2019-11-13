@@ -81,6 +81,7 @@ def get_lines(file):
     for line in log:
         yield(line)
 
+
 def r2(number):
     return round(number, 3)
 
