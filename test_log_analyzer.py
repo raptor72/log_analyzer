@@ -35,7 +35,11 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual(p.__next__(), ('GET /api/v2/banner/20825304 HTTP/1.1', '0.073'))
         self.assertEqual(p.__next__(), ('GET /api/v2/banner/22913947 HTTP/1.1', '0.074'))
         self.assertEqual(p.__next__(), ('GET /api/v2/banner/20828125 HTTP/1.1', '0.075'))
-#        self.assertIsNone(p.__next__())
+        self.assertRaises(StopIteration, p.__next__)
+
+    def test_get_statistics(self):
+        dicted = get_statistics(parse_line(lines))
+        self.assertEqual(dicted.__next__(), ({'GET /api/v2/banner/22911507 HTTP/1.1': [1, 0.071, 0.071, 0.071, 1, [0.071]], 'GET /api/v2/banner/20825304 HTTP/1.1': [1, 0.073, 0.073, 0.073, 2, [0.073]], 'GET /api/v2/banner/22913947 HTTP/1.1': [1, 0.074, 0.074, 0.074, 3, [0.074]], 'GET /api/v2/banner/20828125 HTTP/1.1': [1, 0.075, 0.075, 0.075, 4, [0.075]]}, 0.293))
 
 
 if __name__ == '__main__':
