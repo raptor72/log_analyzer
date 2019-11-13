@@ -70,6 +70,12 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual(len(handled_more), 0)
         self.assertEqual(len(handled_more_and_less), 1)
 
+    def test_get_last_log(self):
+#        print(get_last_log("./test_log/gz/"))
+        self.assertIn("nginx-access-ui.log-20191124.gz", get_last_log("./test_log/gz/").path)
+        self.assertEqual("20191124", get_last_log("./test_log/gz/").date)
+        self.assertEqual("gz", get_last_log("./test_log/gz/").extension)
+
 
 if __name__ == '__main__':
     unittest.main()
