@@ -28,10 +28,10 @@ def now():
 
 def get_external_config():
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('-c', help='CMD')
+    parser.add_argument('--config', help='CMD')
     args = parser.parse_args()
     config = default_config
-    external_config = str(args.c)
+    external_config = str(args.config)
     if external_config:
         if os.path.exists(external_config):
             with open(external_config, 'r') as conf:
@@ -42,7 +42,7 @@ def get_external_config():
             logging.info("use external config")
         else:
             logging.info("use default config")
-    logging.info(f"resule config is {config}")
+    logging.info(f"result config is {config}")
     return config
 
 def get_last_log(logdir):
@@ -64,8 +64,6 @@ def get_last_log(logdir):
         my_log = Lastlog(date, path, extension)
         logging.info(f"pring {my_log} ")
         return my_log
-
-#print(*my_log)
 
 def parse_line(strings):
     for string in strings:
@@ -91,22 +89,14 @@ def get_statistics(parsedlines):
     d = dict()
     all_count = 0
     all_time = 0.0
-    count_perc = 0.0
-    time_perc = 0.0
-    time_avg = 0.0
-    time_max = 0.0
-    time_med = 0.0
     for parsedline in parsedlines:
-
         all_count += 1
         all_time += r2(float(parsedline[1]))
         if d.get(parsedline[0]) is None:
             time_pack = []
             direct_count = 1
             time_pack.append(r2(float(parsedline[1])))
-                                       #count              #time_avg            #time_max
             d.update({parsedline[0]: [direct_count, r2(float(parsedline[1])), r2(float(parsedline[1])),
-                                     #time_sum
                                       r2(float(parsedline[1])), all_count, time_pack]})
         else:
             payload = d.get(parsedline[0])
@@ -167,6 +157,7 @@ def main():
     logging.info("script started at " + now())
     config = get_external_config()
     print(config)
+
 
     my_log = get_last_log(config["LOG_DIR"])
     if my_log is None:
