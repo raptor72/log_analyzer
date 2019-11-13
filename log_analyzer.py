@@ -8,6 +8,7 @@ import sys
 import json
 import logging
 from datetime import datetime
+import argparse
 
 logging.basicConfig(filename="log_analyzer.log", level=logging.INFO)
 
@@ -26,9 +27,12 @@ def now():
     return str(datetime.now())
 
 def get_external_config():
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('-c', help='CMD')
+    args = parser.parse_args()
     config = default_config
-    try:
-        external_config = sys.argv[1]
+    external_config = str(args.c)
+    if external_config:
         if os.path.exists(external_config):
             with open(external_config, 'r') as conf:
                 external_settings = json.load(conf)
@@ -38,31 +42,28 @@ def get_external_config():
             logging.info("use external config")
         else:
             logging.info("use default config")
-        logging.info(f"resule config is {config}")
-    except IndexError:
-        pass
+    logging.info(f"resule config is {config}")
     return config
 
 def get_last_log(logdir):
     files = os.listdir(logdir)
-#    files = os.listdir(config["LOG_DIR"])
-    last = ""
-    for file in files:
-        m = re.match('^nginx-access-ui.log-\d{8}($|.gz$)', file)
-        if m is not None:
-            if file > last:
-                last = file
-                date = file.split("-")[-1].split(".")[0]
-#                path = str(os.path.abspath(config["LOG_DIR"])) + "/"  + last
-                path = str(os.path.abspath(logdir)) + "/" + last
-                extension = "gz" if last.split(".")[-1] == "gz" else ""
-    logging.info(f"choised log file is {last}")
-    logging.info("no log files matched")
+    if files:
+        last = ""
+        for file in files:
+            m = re.match('^nginx-access-ui.log-\d{8}($|.gz$)', file)
+            if m is not None:
+                if file > last:
+                    last = file
+                    date = file.split("-")[-1].split(".")[0]
+                    path = str(os.path.abspath(logdir)) + "/" + last
+                    extension = "gz" if last.split(".")[-1] == "gz" else ""
+        logging.info(f"choised log file is {last}")
+        logging.info("no log files matched")
 
-    Lastlog = namedtuple('Lastlog', 'date path extension')
-    my_log = Lastlog(date, path, extension)
-    logging.info(f"pring {my_log} ")
-    return my_log
+        Lastlog = namedtuple('Lastlog', 'date path extension')
+        my_log = Lastlog(date, path, extension)
+        logging.info(f"pring {my_log} ")
+        return my_log
 
 #print(*my_log)
 
@@ -137,7 +138,6 @@ def mediana(data):
 def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"]):
     res = []
     other = []
-#    replacement = {direct_count, time_avg, time_max, time_sum, all_count, url}
     all_count = len(d)
     for i in d.keys():
         pay = d[i]
@@ -167,7 +167,13 @@ def main():
     logging.info("script started at " + now())
     config = get_external_config()
     print(config)
+
     my_log = get_last_log(config["LOG_DIR"])
+    if my_log is None:
+        print("log not exists")
+        sys.exit(1)
+    else:
+        print("correct log file found")
     reportname = "report" + my_log.date + ".html"
     reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
     logging.info(f"reportfile is {reportfile}")
@@ -183,7 +189,6 @@ def main():
         for dic in dicted:
             print(dic)
 #            pass
-        all_time = dic[1]
         d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"])
 
         with open("report.html", "r") as report:
@@ -195,6 +200,7 @@ def main():
             report.write(data)
 
     logging.info("script done at " + now())
+
 
 if __name__ == "__main__":
     main()
