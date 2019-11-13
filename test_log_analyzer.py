@@ -64,6 +64,11 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual(len(handled_equal), 1)
         self.assertEqual(len(handled_both), 2)
 
+    def test_handle_dict_report_size(self):
+        handled_more = handle_dict({'GET /api/v2/banner/1/HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/2/HTTP/1.1': [2, 0.064, 0.065, 0.128, 3, [0.063, 0.065]]}, 0.189, 1)
+        handled_more_and_less = handle_dict({'GET /api/v2/banner/1/HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/2/HTTP/1.1': [2, 0.064, 0.065, 0.128, 3, [0.063, 0.065]]}, 0.189, 0.062)
+        self.assertEqual(len(handled_more), 0)
+        self.assertEqual(len(handled_more_and_less), 1)
 
 
 if __name__ == '__main__':
