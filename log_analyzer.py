@@ -10,7 +10,7 @@ import logging
 from datetime import datetime
 import argparse
 
-logging.basicConfig(filename="log_analyzer.log", level=logging.INFO)
+logging.basicConfig(format = u'[%(asctime)s] %(levelname).1s %(message)s', filename="log_analyzer.log", level=logging.INFO, datefmt='%Y.%m.%d %H:%M:%S')
 
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
@@ -134,7 +134,7 @@ def mediana(data):
         result = smass[mid]
     return result
 
-def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 15):
+def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 21):
     res = []
     other = []
     all_count = len(d)
