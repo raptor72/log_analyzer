@@ -167,54 +167,55 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
 
 
 def main():
-    logging.info("script started at " + now())
-    config = get_external_config()
+    try:
+        logging.info("script started at " + now())
+        config = get_external_config()
 
-    if len(config) == 1:
-        print("Wrong config")
-        sys.exit(1)
-    print(config)
+        if len(config) == 1:
+            print("Wrong config")
+            sys.exit(1)
+        print(config)
 
-
-    my_log = get_last_log(config["LOG_DIR"])
-    if my_log is None:
-        print("log not exists")
-        sys.exit(1)
-    else:
-        print("correct log file found")
-    reportname = "report" + my_log.date + ".html"
-    reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
-    logging.info(f"reportfile is {reportfile}")
-
-    if os.path.exists(reportfile):
-        print("Report alredy created")
-        sys.exit(1)
-    else:
-        lines = get_lines(my_log)
-        print(lines)
-        parsed = parse_line(lines)
-
-        dicted = get_statistics(parsed)
-
-        for dic in dicted:
-            print(dic)
-#            pass
-
-        d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2])
-        if d1 == 1:
-            print("error percentage thrashhold occured")
+        my_log = get_last_log(config["LOG_DIR"])
+        if my_log is None:
+            print("log not exists")
             sys.exit(1)
         else:
-            with open("report.html", "r") as report:
-                data = report.read()
+            print("correct log file found")
+        reportname = "report" + my_log.date + ".html"
+        reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
+        logging.info(f"reportfile is {reportfile}")
 
-            data = data.replace("$table_json", str(d1))
+        if os.path.exists(reportfile):
+            print("Report alredy created")
+            sys.exit(1)
+        else:
+            lines = get_lines(my_log)
+            print(lines)
+            parsed = parse_line(lines)
 
-            with open(reportfile, "w") as report:
-                report.write(data)
+            dicted = get_statistics(parsed)
 
-    logging.info("script done at " + now())
+            for dic in dicted:
+                print(dic)
+#                pass
 
+            d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2])
+            if d1 == 1:
+                print("error percentage thrashhold occured")
+                sys.exit(1)
+            else:
+                with open("report.html", "r") as report:
+                    data = report.read()
+
+                data = data.replace("$table_json", str(d1))
+
+                with open(reportfile, "w") as report:
+                    report.write(data)
+
+        logging.info("script done at " + now())
+    except:
+        logging.exception("fatal message")
 
 if __name__ == "__main__":
     main()
