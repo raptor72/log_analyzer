@@ -134,15 +134,14 @@ def mediana(data):
         result = smass[mid]
     return result
 
-def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 1):
+def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 15):
     res = []
     other = []
     all_count = len(d)
-#   put error handling here below
-    if error_count/all_count >= error_percent:
-        print(error_count/all_count)
-    else:
-        print(error_count/all_count)
+    if error_count/all_count * 100 >= error_percent:
+        print( str(error_count/all_count * 100) + "more thae trashhole error percent " + str(error_percent) )
+        return 1
+    print("error percent is " + str(error_count/all_count * 100))
     for i in d.keys():
         pay = d[i]
         direct_count = pay[0]
@@ -201,16 +200,18 @@ def main():
             print(dic)
 #            pass
 
+        d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2])
+        if d1 == 1:
+            print("error percentage thrashhold occured")
+            sys.exit(1)
+        else:
+            with open("report.html", "r") as report:
+                data = report.read()
 
-        d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"])
+            data = data.replace("$table_json", str(d1))
 
-        with open("report.html", "r") as report:
-            data = report.read()
-
-        data = data.replace("$table_json", str(d1))
-
-        with open(reportfile, "w") as report:
-            report.write(data)
+            with open(reportfile, "w") as report:
+                report.write(data)
 
     logging.info("script done at " + now())
 
