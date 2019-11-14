@@ -41,7 +41,8 @@ def get_external_config():
             config["LOG_DIR"] = external_settings["LOG_DIR"]
             logging.info("use external config")
         else:
-            logging.info("use default config")
+            logging.info("wrong file")
+            return None
     logging.info(f"result config is {config}")
     return config
 
@@ -156,6 +157,10 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"]):
 def main():
     logging.info("script started at " + now())
     config = get_external_config()
+
+    if config is None:
+        print("Wrong config")
+        sys.exit(1)
     print(config)
 
 
