@@ -7,10 +7,11 @@ import gzip
 import sys
 import json
 import logging
-from datetime import datetime
 import argparse
 
-logging.basicConfig(format = u'[%(asctime)s] %(levelname).1s %(message)s', filename="log_analyzer.log", level=logging.INFO, datefmt='%Y.%m.%d %H:%M:%S')
+logging.basicConfig(format = u'[%(asctime)s] %(levelname).1s %(message)s', filename="log_analyzer.log", datefmt='%Y.%m.%d %H:%M:%S',
+                    level=logging.INFO
+                    )
 
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
@@ -22,9 +23,6 @@ default_config = {
     "REPORT_DIR": "./reports",
     "LOG_DIR": "./log"
 }
-
-def now():
-    return str(datetime.now())
 
 def get_external_config():
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -42,10 +40,10 @@ def get_external_config():
                 config["LOG_DIR"] = external_settings["LOG_DIR"]
                 logging.info("use external config")
             except:
-                logging.info("could not parse config")
+                logging.debug("could not parse config")
                 return "1"
         else:
-            logging.info("config file is not wxists")
+            logging.debug("config file is not exists")
             return "2"
     logging.info(f"result config is {config}")
     return config
@@ -62,20 +60,20 @@ def get_last_log(logdir):
                     date = file.split("-")[-1].split(".")[0]
                     path = str(os.path.abspath(logdir)) + "/" + last
                     extension = "gz" if last.split(".")[-1] == "gz" else ""
+            else:
+                logging.debug("no log files matched")
         logging.info(f"choised log file is {last}")
-        logging.info("no log files matched")
-
         Lastlog = namedtuple('Lastlog', 'date path extension')
         my_log = Lastlog(date, path, extension)
-        logging.info(f"pring {my_log} ")
         return my_log
+    else:
+        logging.info("no logs found")
 
 def parse_line(strings):
     for string in strings:
         url = str(string).split('"')[1]
         time = str(string).split(" ")[-1].replace("\n","").replace("\\n'", "")
         yield url, time
-
 
 def get_lines(file):
     if file.extension == "gz":
@@ -138,6 +136,7 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
     res = []
     other = []
     all_count = len(d)
+#    all_count = 0
     if error_count/all_count * 100 >= error_percent:
         print( str(error_count/all_count * 100) + "more thae trashhole error percent " + str(error_percent) )
         return 1
@@ -167,42 +166,38 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
 
 
 def main():
-    try:
-        logging.info("script started at " + now())
-        config = get_external_config()
+    logging.info("script started")
+    config = get_external_config()
 
-        if len(config) == 1:
-            print("Wrong config")
-            sys.exit(1)
-        print(config)
+    if len(config) == 1:
+        print("Wrong config")
+        logging.error(f"Used wrond configuration file")
+        sys.exit(1)
 
-        my_log = get_last_log(config["LOG_DIR"])
-        if my_log is None:
-            print("log not exists")
-            sys.exit(1)
-        else:
-            print("correct log file found")
-        reportname = "report" + my_log.date + ".html"
-        reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
-        logging.info(f"reportfile is {reportfile}")
+    my_log = get_last_log(config["LOG_DIR"])
+    if my_log is None:
+        print("no logs found")
+        sys.exit(0)
+    reportname = "report" + my_log.date + ".html"
+    reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
+    logging.info(f"reportfile is {reportfile}")
 
-        if os.path.exists(reportfile):
-            print("Report alredy created")
-            sys.exit(1)
-        else:
+    if os.path.exists(reportfile):
+        logging.info("Report alredy created")
+        sys.exit(1)
+    else:
+        try:
             lines = get_lines(my_log)
-            print(lines)
             parsed = parse_line(lines)
-
             dicted = get_statistics(parsed)
 
             for dic in dicted:
                 print(dic)
-#                pass
+#            pass
 
             d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2])
             if d1 == 1:
-                print("error percentage thrashhold occured")
+                print("error percentage trashhold occured")
                 sys.exit(1)
             else:
                 with open("report.html", "r") as report:
@@ -213,9 +208,9 @@ def main():
                 with open(reportfile, "w") as report:
                     report.write(data)
 
-        logging.info("script done at " + now())
-    except:
-        logging.exception("fatal message")
+            logging.info("script done")
+        except:
+            logging.exception("fatal unexpected error")
 
 if __name__ == "__main__":
     main()
