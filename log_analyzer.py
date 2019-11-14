@@ -31,18 +31,22 @@ def get_external_config():
     parser.add_argument('--config', help='CMD')
     args = parser.parse_args()
     config = default_config
-    external_config = str(args.config)
-    if external_config:
+    external_config = args.config
+    if external_config is not None:
         if os.path.exists(external_config):
-            with open(external_config, 'r') as conf:
-                external_settings = json.load(conf)
-            config["REPORT_SIZE"] = external_settings["REPORT_SIZE"]
-            config["REPORT_DIR"] = external_settings["REPORT_DIR"]
-            config["LOG_DIR"] = external_settings["LOG_DIR"]
-            logging.info("use external config")
+            try:
+                with open(external_config, 'r') as conf:
+                    external_settings = json.load(conf)
+                config["REPORT_SIZE"] = external_settings["REPORT_SIZE"]
+                config["REPORT_DIR"] = external_settings["REPORT_DIR"]
+                config["LOG_DIR"] = external_settings["LOG_DIR"]
+                logging.info("use external config")
+            except:
+                logging.info("could not parse config")
+                return "1"
         else:
-            logging.info("wrong file")
-            return None
+            logging.info("config file is not wxists")
+            return "2"
     logging.info(f"result config is {config}")
     return config
 
@@ -158,7 +162,7 @@ def main():
     logging.info("script started at " + now())
     config = get_external_config()
 
-    if config is None:
+    if len(config) == 1:
         print("Wrong config")
         sys.exit(1)
     print(config)
