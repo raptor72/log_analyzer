@@ -94,29 +94,33 @@ def get_statistics(parsedlines):
     d = dict()
     all_count = 0
     all_time = 0.0
+    err_count = 0
     for parsedline in parsedlines:
         all_count += 1
-        all_time += r2(float(parsedline[1]))
-        if d.get(parsedline[0]) is None:
-            time_pack = []
-            direct_count = 1
-            time_pack.append(r2(float(parsedline[1])))
-            d.update({parsedline[0]: [direct_count, r2(float(parsedline[1])), r2(float(parsedline[1])),
-                                      r2(float(parsedline[1])), all_count, time_pack]})
-        else:
-            payload = d.get(parsedline[0])
-            direct_count = payload[0] + 1
-            time_sum = r2(float(payload[3]) + float(parsedline[1]))
-            time_avg = r2(time_sum/direct_count)
-            time_pack = payload[5]
-            time_pack.append(r2(float(parsedline[1])))
-            if payload[2] > r2(float(parsedline[1])):
-                time_max = r2(float(payload[2]))
+        try:
+            all_time += r2(float(parsedline[1]))
+            if d.get(parsedline[0]) is None:
+                time_pack = []
+                direct_count = 1
+                time_pack.append(r2(float(parsedline[1])))
+                d.update({parsedline[0]: [direct_count, r2(float(parsedline[1])), r2(float(parsedline[1])),
+                                          r2(float(parsedline[1])), all_count, time_pack]})
             else:
-                time_max = r2(float(parsedline[1]))
-            newpayload = [direct_count, time_avg, time_max, time_sum, all_count, time_pack]
-            d[parsedline[0]] = newpayload
-    yield d, all_time
+                payload = d.get(parsedline[0])
+                direct_count = payload[0] + 1
+                time_sum = r2(float(payload[3]) + float(parsedline[1]))
+                time_avg = r2(time_sum/direct_count)
+                time_pack = payload[5]
+                time_pack.append(r2(float(parsedline[1])))
+                if payload[2] > r2(float(parsedline[1])):
+                    time_max = r2(float(payload[2]))
+                else:
+                    time_max = r2(float(parsedline[1]))
+                newpayload = [direct_count, time_avg, time_max, time_sum, all_count, time_pack]
+                d[parsedline[0]] = newpayload
+        except:
+            err_count +=1
+    yield d, all_time, err_count
 
 
 def mediana(data):
@@ -130,10 +134,15 @@ def mediana(data):
         result = smass[mid]
     return result
 
-def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"]):
+def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 1):
     res = []
     other = []
     all_count = len(d)
+#   put error handling here below
+    if error_count/all_count >= error_percent:
+        print(error_count/all_count)
+    else:
+        print(error_count/all_count)
     for i in d.keys():
         pay = d[i]
         direct_count = pay[0]
@@ -183,12 +192,16 @@ def main():
         sys.exit(1)
     else:
         lines = get_lines(my_log)
+        print(lines)
         parsed = parse_line(lines)
+
         dicted = get_statistics(parsed)
 
         for dic in dicted:
             print(dic)
 #            pass
+
+
         d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"])
 
         with open("report.html", "r") as report:
