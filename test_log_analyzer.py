@@ -21,13 +21,6 @@ lines_both = [
 '1.196.116.32 -  - [29/Jun/2017:03:52:44 +0300] "GET /api/v2/banner/2/HTTP/1.1" 200 576 "-" "Lynx/2.8.8dev.9 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/2.10.5" "-" "1498697564-2190034393-4708-9754324" "dc7161be3" 0.065',
 ]
 
-#def get_lines(lines):
-#    for line in lines:
-#        yield(line)
-
-#p = parse_line(lines)
-#print(p.__next__())
-
 
 class LogAnalyzerTest(unittest.TestCase):
     def test_mediana(self):
@@ -71,7 +64,6 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual(len(handled_more_and_less), 1)
 
     def test_get_last_log(self):
-#        print(get_last_log("./test_log/gz/"))
         self.assertIn("nginx-access-ui.log-20191124.gz", get_last_log("./test_log/gz/").path)
         self.assertEqual("20191124", get_last_log("./test_log/gz/").date)
         self.assertEqual("gz", get_last_log("./test_log/gz/").extension)
