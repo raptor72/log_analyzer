@@ -144,10 +144,9 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
     res = []
     sorted_list = []
     all_count = len(d)
-    if error_count / all_count * 100 >= error_percent:
+    if error_count / all_count * 100 > error_percent:
         logging.info(f"Reach error threshold {str(error_count / all_count * 100)}")
         return 1
-    print("error percent is " + str(error_count / all_count * 100))
     for i in d.keys():
         pay = d[i]
         direct_count = pay[0]

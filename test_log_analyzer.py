@@ -39,14 +39,16 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual(p.__next__(), ('GET /api/v2/banner/22913947 HTTP/1.1', '0.065'))
         self.assertRaises(StopIteration, p.__next__)
 
+
     def test_get_statistics(self):
         dicted_diff = get_statistics(parse_line(lines_diff))
         self.assertEqual(dicted_diff.__next__(), ({'GET /api/v2/banner/22911507 HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/20825304 HTTP/1.1': [1, 0.063, 0.063, 0.063, 2, [0.063]],
-                                              'GET /api/v2/banner/22913947 HTTP/1.1': [1, 0.065, 0.065, 0.065, 3, [0.065]]}, 0.189))
+                                              'GET /api/v2/banner/22913947 HTTP/1.1': [1, 0.065, 0.065, 0.065, 3, [0.065]]}, 0.189, 0))
         dicted_equal = get_statistics(parse_line(lines_equal))
-        self.assertEqual(dicted_equal.__next__(), ({'GET /api/v2/banner/HTTP/1.1': [3, 0.063, 0.065, 0.189, 3, [0.061, 0.063, 0.065]]}, 0.189))
+        self.assertEqual(dicted_equal.__next__(), ({'GET /api/v2/banner/HTTP/1.1': [3, 0.063, 0.065, 0.189, 3, [0.061, 0.063, 0.065]]}, 0.189, 0))
         dicted_both = get_statistics(parse_line(lines_both))
-        self.assertEqual(dicted_both.__next__(), ({'GET /api/v2/banner/1/HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/2/HTTP/1.1': [2, 0.064, 0.065, 0.128, 3, [0.063, 0.065]]}, 0.189))
+        self.assertEqual(dicted_both.__next__(), ({'GET /api/v2/banner/1/HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/2/HTTP/1.1': [2, 0.064, 0.065, 0.128, 3, [0.063, 0.065]]}, 0.189, 0))
+
 
     def test_handle_dict(self):
         handled_diff=handle_dict({'GET /api/v2/banner/22911507 HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/20825304 HTTP/1.1': [1, 0.063, 0.063, 0.063, 2, [0.063]],
@@ -56,6 +58,7 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual(len(handled_diff), 3)
         self.assertEqual(len(handled_equal), 1)
         self.assertEqual(len(handled_both), 2)
+
 
     def test_handle_dict_report_size(self):
         handled_more = handle_dict({'GET /api/v2/banner/1/HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/2/HTTP/1.1': [2, 0.064, 0.065, 0.128, 3, [0.063, 0.065]]}, 0.189, 1)
