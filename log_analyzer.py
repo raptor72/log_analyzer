@@ -29,7 +29,7 @@ default_config = {
 
 
 def get_external_config():
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser()
     parser.add_argument('--config', help='CMD')
     args = parser.parse_args()
     config = default_config
@@ -45,20 +45,20 @@ def get_external_config():
                 logging.info("use external config")
             except:
                 logging.debug("could not parse config")
-                return "1"
+                return None
         else:
             logging.debug("config file is not exists")
-            return "2"
+            return None
     logging.info(f"result config is {config}")
     return config
 
 
 def get_last_log(logdir):
-    files = os.listdir(logdir)
-    if files:
+    if os.listdir(logdir):
         last = ""
-        for file in files:
-            m = re.match('^nginx-access-ui.log-\d{8}($|.gz$)', file)
+        pattern = re.compile('^nginx-access-ui.log-\d{8}($|.gz$)')
+        for file in os.listdir(logdir):
+            m = pattern.findall(file)
             if m is not None:
                 if file > last:
                     last = file
@@ -174,7 +174,7 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
 def main():
     logging.info("script started")
     config = get_external_config()
-    if len(config) == 1:
+    if config is None:
         print("Wrong config")
         logging.error(f"Used wrond configuration file")
         sys.exit(1)
