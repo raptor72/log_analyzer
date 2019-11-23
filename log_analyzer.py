@@ -76,9 +76,9 @@ def get_last_log(logdir):
 
 
 def parse_line(strings):
-    for string in strings:
-        url = str(string).split('"')[1]
-        time = str(string).split(" ")[-1].replace("\n","").replace("\\n'", "")
+    for line in strings:
+        url = str(line).split('"')[1]
+        time = str(line).split(" ")[-1].replace("\n","").replace("\\n'", "")
         yield url, time
 
 
@@ -190,31 +190,31 @@ def main():
     if os.path.exists(reportfile):
         logging.info("Report alredy created")
         sys.exit(1)
-    else:
-        try:
-            lines = get_lines(my_log)
-            parsed = parse_line(lines)
-            dicted = get_statistics(parsed)
 
-            for dic in dicted:
-                print(dic)
+    try:
+        lines = get_lines(my_log)
+        parsed = parse_line(lines)
+        dicted = get_statistics(parsed)
 
-            d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2], config["ERROR_PERCENT"])
-            if d1 == 1:
-                print("error percentage treshhold occured")
-                sys.exit(1)
-            else:
-                with open("report.html", "r") as report:
-                    data = report.read()
+        for dic in dicted:
+            print(dic)
 
-                data = data.replace("$table_json", str(d1))
+        d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2], config["ERROR_PERCENT"])
+        if d1 == 1:
+            print("error percentage treshhold occured")
+            sys.exit(1)
+        else:
+            with open("report.html", "r") as report:
+                data = report.read()
 
-                with open(reportfile, "w") as report:
-                    report.write(data)
+            data = data.replace("$table_json", str(d1))
 
-            logging.info("script done")
-        except:
-            logging.exception("fatal unexpected error")
+            with open(reportfile, "w") as report:
+                report.write(data)
+
+        logging.info("script done")
+    except:
+        logging.exception("fatal unexpected error")
 
 if __name__ == "__main__":
     main()
