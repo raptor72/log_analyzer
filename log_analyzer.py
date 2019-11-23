@@ -9,6 +9,7 @@ import json
 import logging
 import argparse
 
+Lastlog = namedtuple('Lastlog', 'date path extension')
 
 logging.basicConfig(format = u'[%(asctime)s] %(levelname).1s %(message)s', filename="log_analyzer.log", datefmt='%Y.%m.%d %H:%M:%S',
                     level=logging.INFO
@@ -68,7 +69,6 @@ def get_last_log(logdir):
             else:
                 logging.debug("no log files matched")
         logging.info(f"choised log file is {last}")
-        Lastlog = namedtuple('Lastlog', 'date path extension')
         my_log = Lastlog(date, path, extension)
         return my_log
     else:
@@ -183,7 +183,7 @@ def main():
     if my_log is None:
         print("no logs found")
         sys.exit(0)
-    reportname = "report" + my_log.date + ".html"
+    reportname = (f"report{my_log.date}.html")
     reportfile = os.path.join(os.path.abspath(config["REPORT_DIR"]), reportname)
     logging.info(f"reportfile is {reportfile}")
 
