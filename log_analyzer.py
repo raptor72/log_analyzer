@@ -63,7 +63,7 @@ def get_last_log(logdir):
                 if file > last:
                     last = file
                     date = file.split("-")[-1].split(".")[0]
-                    path = str(os.path.abspath(logdir)) + "/" + last
+                    path = os.path.join( os.path.abspath(logdir), last)
                     extension = "gz" if last.split(".")[-1] == "gz" else ""
             else:
                 logging.debug("no log files matched")
@@ -184,7 +184,7 @@ def main():
         print("no logs found")
         sys.exit(0)
     reportname = "report" + my_log.date + ".html"
-    reportfile = str(os.path.abspath(config["REPORT_DIR"])) + "/"  + reportname
+    reportfile = os.path.join(os.path.abspath(config["REPORT_DIR"]), reportname)
     logging.info(f"reportfile is {reportfile}")
 
     if os.path.exists(reportfile):

@@ -32,3 +32,28 @@
 [2019.11.23 18:14:48] I choised log file is nginx-access-ui.log-20191113.gz
 [2019.11.23 18:14:48] I reportfile is /home/maksim/Desktop/otus/log_analyzer/reports/report20191113.html
 [2019.11.23 18:14:48] I script done
+[2019.11.23 18:36:11] I script started
+[2019.11.23 18:36:11] I result config is {'REPORT_SIZE': 25, 'REPORT_DIR': './reports', 'LOG_DIR': './log', 'ERROR_PERCENT': 25}
+[2019.11.23 18:36:11] I choised log file is nginx-access-ui.log-20191113.gz
+[2019.11.23 18:36:11] I reportfile is /home/maksim/Desktop/otus/log_analyzer/reports/report20191113.html
+[2019.11.23 18:36:11] I Report alredy created
+[2019.11.23 18:36:20] I script started
+[2019.11.23 18:36:20] I result config is {'REPORT_SIZE': 25, 'REPORT_DIR': './reports', 'LOG_DIR': './log', 'ERROR_PERCENT': 25}
+[2019.11.23 18:36:20] I choised log file is nginx-access-ui.log-20191113.gz
+[2019.11.23 18:36:20] I reportfile is /home/maksim/Desktop/otus/log_analyzer/reports/report20191113.html
+[2019.11.23 18:36:20] I script done
+[2019.11.23 18:37:41] I script started
+[2019.11.23 18:37:41] I result config is {'REPORT_SIZE': 25, 'REPORT_DIR': './reports', 'LOG_DIR': './log', 'ERROR_PERCENT': 25}
+[2019.11.23 18:37:41] I choised log file is nginx-access-ui.log-20191113.gz
+[2019.11.23 18:37:41] I reportfile is /home/maksim/Desktop/otus/log_analyzer/reports/report20191113.html
+[2019.11.23 18:37:41] I script done
+[2019.11.23 18:38:10] I script started
+[2019.11.23 18:38:10] I result config is {'REPORT_SIZE': 25, 'REPORT_DIR': './reports', 'LOG_DIR': './log', 'ERROR_PERCENT': 25}
+[2019.11.23 18:38:10] I choised log file is nginx-access-ui.log-20191113.gz
+[2019.11.23 18:38:10] I reportfile is /home/maksim/Desktop/otus/log_analyzer/reports/report20191113.html
+[2019.11.23 18:38:10] I script done
+[2019.11.23 18:38:38] I script started
+[2019.11.23 18:38:38] I result config is {'REPORT_SIZE': 25, 'REPORT_DIR': './reports', 'LOG_DIR': './log', 'ERROR_PERCENT': 25}
+[2019.11.23 18:38:38] I choised log file is nginx-access-ui.log-20191113.gz
+[2019.11.23 18:38:38] I reportfile is /home/maksim/Desktop/otus/log_analyzer/reports/report20191113.html
+[2019.11.23 18:38:38] I script done
