@@ -140,15 +140,15 @@ def mediana(data):
     return result
 
 
-def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 0):
+def handle_dict(accumulated_dict, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 0):
     res = []
     sorted_list = []
-    all_count = len(d)
+    all_count = len(accumulated_dict)
     if error_count / all_count * 100 > error_percent:
         logging.info(f"Reach error threshold {str(error_count / all_count * 100)}")
         return 1
-    for i in d.keys():
-        pay = d[i]
+    for i in accumulated_dict.keys():
+        pay = accumulated_dict[i]
         direct_count = pay[0]
         count_perc = direct_count / all_count * 100
         time_row = pay.pop()
@@ -158,16 +158,15 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
         pay.append(count_perc)
         pay.append(time_med)
         pay.append(time_perc)
-        d[i] = pay
-    for i, j in d.items():
+        accumulated_dict[i] = pay
+    for i, j in accumulated_dict.items():
         if j[3] < float(report_size): #time_sum
             continue
         else:
             res.append( [i, *j])
-    mediator = sorted(res, key=lambda x: x[3], reverse = True)
-    for k in mediator:
-        sorted_list.append({"count" : r2(k[1]), "count_perc": r2(k[5]), "time_avg": r2(k[3]), "time_max": r2(k[4]), "time_med": r2(k[6]), "time_perc": r2(k[7]),
-                       "time_sum": r2(k[4]), "url": k[0]})
+    for item in sorted(res, key=lambda x: x[3], reverse = True):
+        sorted_list.append({"count" : r2(item[1]), "count_perc": r2(item[5]), "time_avg": r2(item[3]), "time_max": r2(item[4]),
+                            "time_med": r2(item[6]), "time_perc": r2(item[7]), "time_sum": r2(item[4]), "url": item[0]})
     return sorted_list
 
 

@@ -1,5 +1,0 @@
-[2019.11.24 17:30:56] I script started
-[2019.11.24 17:30:56] I result config is {'REPORT_SIZE': 25, 'REPORT_DIR': './reports', 'LOG_DIR': './log', 'ERROR_PERCENT': 25}
-[2019.11.24 17:30:56] I choised log file is nginx-access-ui.log-20191113.gz
-[2019.11.24 17:30:56] I reportfile is /home/maksim/Desktop/otus/log_analyzer/reports/report20191113.html
-[2019.11.24 17:30:56] I script done
