@@ -125,7 +125,7 @@ def get_statistics(parsed_lines):
                 accumulated_dict[url] = updated_payload
         except:
             err_count +=1
-    yield accumulated_dict, all_time, err_count
+    return accumulated_dict, all_time, err_count
 
 
 def mediana(data):
@@ -194,10 +194,8 @@ def main():
     try:
         lines = get_lines(my_log)
         parsed = parse_line(lines)
-        dicted = get_statistics(parsed)
+        dic = get_statistics(parsed)
 
-        for dic in dicted:
-            print(dic)
 
         d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2], config["ERROR_PERCENT"])
         if d1 == 1:
@@ -213,6 +211,8 @@ def main():
                 report.write(data)
 
         logging.info("script done")
+
+
     except:
         logging.exception("fatal unexpected error")
 
