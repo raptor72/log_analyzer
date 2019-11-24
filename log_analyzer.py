@@ -96,36 +96,36 @@ def r2(number):
 
 
 def get_statistics(parsed_lines):
-    d = {}
+    accumulated_dict = {}
     all_count = 0
     all_time = 0.0
     err_count = 0
     for url, strtime in parsed_lines:
         all_count += 1
         try:
-            time = r2(float(strtime))
+            time = float(strtime)
             all_time += time
-            if d.get(url) is None:
+            if accumulated_dict.get(url) is None:
                 time_pack = [time]
                 direct_count = 1
-                d.update({ url: [direct_count, time, time,
+                accumulated_dict.update({ url: [direct_count, time, time,
                         time, all_count, time_pack]})
             else:
-                payload = d.get(url)
+                payload = accumulated_dict.get(url)
                 direct_count = payload[0] + 1
-                time_sum = r2(float(payload[3]) + time)
-                time_avg = r2(time_sum / direct_count)
+                time_sum = float(payload[3]) + time
+                time_avg = time_sum / direct_count
                 time_pack = payload[5]
                 time_pack.append(time)
                 if payload[2] > time:
-                    time_max = r2(float(payload[2]))
+                    time_max = float(payload[2])
                 else:
                     time_max = time
                 updated_payload = [direct_count, time_avg, time_max, time_sum, all_count, time_pack]
-                d[url] = updated_payload
+                accumulated_dict[url] = updated_payload
         except:
             err_count +=1
-    yield d, all_time, err_count
+    yield accumulated_dict, all_time, err_count
 
 
 def mediana(data):
@@ -150,11 +150,11 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
     for i in d.keys():
         pay = d[i]
         direct_count = pay[0]
-        count_perc = r2(direct_count / all_count * 100)
+        count_perc = direct_count / all_count * 100
         time_row = pay.pop()
         pay.pop()
-        time_med = r2(mediana(time_row))
-        time_perc = r2(pay[3] / all_time * 100)
+        time_med = mediana(time_row)
+        time_perc = pay[3] / all_time * 100
         pay.append(count_perc)
         pay.append(time_med)
         pay.append(time_perc)
@@ -166,8 +166,8 @@ def handle_dict(d, all_time, report_size=default_config["REPORT_SIZE"], error_co
             res.append( [i, *j])
     mediator = sorted(res, key=lambda x: x[3], reverse = True)
     for k in mediator:
-        sorted_list.append({"count" : k[1], "count_perc": k[5], "time_avg": k[3], "time_max":k[4], "time_med": k[6], "time_perc": k[7],
-                       "time_sum": k[4], "url": k[0]})
+        sorted_list.append({"count" : r2(k[1]), "count_perc": r2(k[5]), "time_avg": r2(k[3]), "time_max": r2(k[4]), "time_med": r2(k[6]), "time_perc": r2(k[7]),
+                       "time_sum": r2(k[4]), "url": k[0]})
     return sorted_list
 
 
@@ -176,7 +176,7 @@ def main():
     config = get_external_config()
     if config is None:
         print("Wrong config")
-        logging.error(f"Used wrond configuration file")
+        logging.error(f"Used wrong configuration file")
         sys.exit(1)
 
     my_log = get_last_log(config["LOG_DIR"])
