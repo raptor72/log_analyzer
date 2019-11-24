@@ -106,9 +106,8 @@ def get_statistics(parsed_lines):
             time = r2(float(strtime))
             all_time += time
             if d.get(url) is None:
-                time_pack = []
+                time_pack = [time]
                 direct_count = 1
-                time_pack.append(time)
                 d.update({ url: [direct_count, time, time,
                         time, all_count, time_pack]})
             else:
