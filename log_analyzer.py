@@ -96,23 +96,23 @@ def r2(number):
 
 
 def get_statistics(parsed_lines):
-    d = dict()
+    d = {}
     all_count = 0
     all_time = 0.0
     err_count = 0
-    for parsed_line in parsed_lines:
+    for url, strtime in parsed_lines:
         all_count += 1
         try:
-            time = r2(float(parsed_line[1]))
+            time = r2(float(strtime))
             all_time += time
-            if d.get(parsed_line[0]) is None:
+            if d.get(url) is None:
                 time_pack = []
                 direct_count = 1
                 time_pack.append(time)
-                d.update({parsed_line[0]: [direct_count, time, time,
-                                          time, all_count, time_pack]})
+                d.update({ url: [direct_count, time, time,
+                        time, all_count, time_pack]})
             else:
-                payload = d.get(parsed_line[0])
+                payload = d.get(url)
                 direct_count = payload[0] + 1
                 time_sum = r2(float(payload[3]) + time)
                 time_avg = r2(time_sum / direct_count)
@@ -123,7 +123,7 @@ def get_statistics(parsed_lines):
                 else:
                     time_max = time
                 updated_payload = [direct_count, time_avg, time_max, time_sum, all_count, time_pack]
-                d[parsed_line[0]] = updated_payload
+                d[url] = updated_payload
         except:
             err_count +=1
     yield d, all_time, err_count
