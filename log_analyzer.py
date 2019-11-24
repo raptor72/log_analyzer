@@ -103,24 +103,25 @@ def get_statistics(parsed_lines):
     for parsed_line in parsed_lines:
         all_count += 1
         try:
-            all_time += r2(float(parsed_line[1]))
+            time = r2(float(parsed_line[1]))
+            all_time += time
             if d.get(parsed_line[0]) is None:
                 time_pack = []
                 direct_count = 1
-                time_pack.append(r2(float(parsed_line[1])))
-                d.update({parsed_line[0]: [direct_count, r2(float(parsed_line[1])), r2(float(parsed_line[1])),
-                                          r2(float(parsed_line[1])), all_count, time_pack]})
+                time_pack.append(time)
+                d.update({parsed_line[0]: [direct_count, time, time,
+                                          time, all_count, time_pack]})
             else:
                 payload = d.get(parsed_line[0])
                 direct_count = payload[0] + 1
-                time_sum = r2(float(payload[3]) + float(parsed_line[1]))
+                time_sum = r2(float(payload[3]) + time)
                 time_avg = r2(time_sum / direct_count)
                 time_pack = payload[5]
-                time_pack.append(r2(float(parsed_line[1])))
-                if payload[2] > r2(float(parsed_line[1])):
+                time_pack.append(time)
+                if payload[2] > time:
                     time_max = r2(float(payload[2]))
                 else:
-                    time_max = r2(float(parsed_line[1]))
+                    time_max = time
                 updated_payload = [direct_count, time_avg, time_max, time_sum, all_count, time_pack]
                 d[parsed_line[0]] = updated_payload
         except:
