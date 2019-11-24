@@ -77,8 +77,8 @@ def get_last_log(logdir):
 
 def parse_line(strings):
     for line in strings:
-        url = str(line).split('"')[1]
-        time = str(line).split(" ")[-1].replace("\n","").replace("\\n'", "")
+        url = line.split('"')[1]
+        time = line.split(" ")[-1].replace("\n","").replace("\\n'", "")
         yield url, time
 
 
@@ -88,7 +88,7 @@ def get_lines(file):
     else:
         log = open(file.path, 'r+', encoding='utf-8')
     for line in log:
-        yield(line)
+        yield str(line)
 
 
 def r2(number):
