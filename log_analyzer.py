@@ -8,6 +8,7 @@ import sys
 import json
 import logging
 import argparse
+import datetime
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
 
@@ -56,20 +57,21 @@ def get_external_config():
 
 def get_last_log(logdir):
     if os.listdir(logdir):
-        last = ""
+        last_date = datetime.date(1970, 1, 1).strftime('%Y%m%d')
         pattern = re.compile('^nginx-access-ui.log-\d{8}($|.gz$)')
         for file in os.listdir(logdir):
-            m = pattern.findall(file)
-            if m is not None:
-                if file > last:
-                    last = file
-                    date = file.split("-")[-1].split(".")[0]
-                    path = os.path.join( os.path.abspath(logdir), last)
-                    extension = "gz" if last.split(".")[-1] == "gz" else ""
+            matched = pattern.findall(file)
+            if matched:
+                current_date = datetime.datetime.strptime( file.split("-")[-1].split(".")[0], '%Y%m%d').strftime('%Y%m%d')
+                if current_date > last_date:
+                    last_file = file
+                    last_date = current_date
+                    path = os.path.join( os.path.abspath(logdir), last_file)
+                    extension = "gz" if last_file.split(".")[-1] == "gz" else ""
             else:
                 logging.debug("no log files matched")
-        logging.info(f"choised log file is {last}")
-        my_log = Lastlog(date, path, extension)
+        logging.info(f"choised log file is {last_file}")
+        my_log = Lastlog(last_date, path, extension)
         return my_log
     else:
         logging.info("no logs found")
@@ -183,6 +185,8 @@ def main():
         print("no logs found")
         sys.exit(0)
     reportname = (f"report{my_log.date}.html")
+    if not os.path.exists(config["REPORT_DIR"]):
+        os.makedirs(config["REPORT_DIR"])
     reportfile = os.path.join(os.path.abspath(config["REPORT_DIR"]), reportname)
     logging.info(f"reportfile is {reportfile}")
 
