@@ -172,6 +172,14 @@ def handle_dict(accumulated_dict, all_time, report_size=default_config["REPORT_S
     return sorted_list
 
 
+def render_report(reportfile, replacement):
+    with open("report.html", "r") as report:
+        data = report.read()
+    data = data.replace("$table_json", str(replacement))
+    with open(reportfile, "w") as report:
+        report.write(data)
+
+
 def main():
     logging.info("script started")
     config = get_external_config()
@@ -197,21 +205,14 @@ def main():
     try:
         lines = get_lines(my_log)
         parsed = parse_line(lines)
-        dic = get_statistics(parsed)
+        collected_data = get_statistics(parsed)
 
-
-        d1 = handle_dict(dic[0], dic[1], config["REPORT_SIZE"], dic[2], config["ERROR_PERCENT"])
-        if d1 == 1:
+        result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
+        if result_replacement == 1:
             print("error percentage treshhold occured")
             sys.exit(1)
         else:
-            with open("report.html", "r") as report:
-                data = report.read()
-
-            data = data.replace("$table_json", str(d1))
-
-            with open(reportfile, "w") as report:
-                report.write(data)
+            render_report(reportfile, result_replacement)
 
         logging.info("script done")
 
