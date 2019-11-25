@@ -161,13 +161,12 @@ def render_report(reportfile, replacement):
 def main(config):
     logging.info("script started")
     if config is None:
-        print("Wrong config")
         logging.error(f"Used wrong configuration file")
         sys.exit(1)
 
     my_log = get_last_log(config["LOG_DIR"])
     if my_log is None:
-        print("no logs found")
+        logging.info("no logs found")
         sys.exit(0)
     reportname = (f"report{my_log.date}.html")
     if not os.path.exists(config["REPORT_DIR"]):
