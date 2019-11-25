@@ -12,9 +12,8 @@ import datetime
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
 
-logging.basicConfig(format = u'[%(asctime)s] %(levelname).1s %(message)s', filename="log_analyzer.log", datefmt='%Y.%m.%d %H:%M:%S',
-                    level=logging.INFO
-                    )
+DEFAULT_CONFIG = './default_config'
+
 
 # log_format ui_short '$remote_addr  $remote_user $http_x_real_ip [$time_local] "$request" '
 #                     '$status $body_bytes_sent "$http_referer" '
@@ -22,37 +21,16 @@ logging.basicConfig(format = u'[%(asctime)s] %(levelname).1s %(message)s', filen
 #                     '$request_time';
 
 
-default_config = {
-    "REPORT_SIZE": 25,
-    "REPORT_DIR": "./reports",
-    "LOG_DIR": "./log",
-    "ERROR_PERCENT" : 25,
-}
-
-
-def get_external_config():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', help='CMD')
-    args = parser.parse_args()
-    config = default_config
-    external_config = args.config
-    if external_config is not None:
-        if os.path.exists(external_config):
-            try:
-                with open(external_config, 'r') as conf:
-                    external_settings = json.load(conf)
-                for i in external_settings.keys():
-                    if config.get(i) is not None:
-                        config[i] = external_settings[i]
-                logging.info("use external config")
-            except:
-                logging.debug("could not parse config")
-                return None
-        else:
-            logging.debug("config file is not exists")
-            return None
-    logging.info(f"result config is {config}")
+def load_config(config_path):
+    with open(config_path, 'rb') as conf:
+        config = json.load(conf, encoding='utf8')
     return config
+
+
+def configure_logging(log_filename):
+    logging.basicConfig(format = u'[%(asctime)s] %(levelname).1s %(message)s', filename=log_filename, datefmt='%Y.%m.%d %H:%M:%S',
+                    level=logging.INFO
+                    )
 
 
 def get_last_log(logdir):
@@ -142,7 +120,7 @@ def mediana(data):
     return result
 
 
-def handle_dict(accumulated_dict, all_time, report_size=default_config["REPORT_SIZE"], error_count = 0, error_percent = 0):
+def handle_dict(accumulated_dict, all_time, report_size, error_count = 0, error_percent = 0):
     res = []
     sorted_list = []
     all_count = len(accumulated_dict)
@@ -180,9 +158,8 @@ def render_report(reportfile, replacement):
         report.write(data)
 
 
-def main():
+def main(config):
     logging.info("script started")
-    config = get_external_config()
     if config is None:
         print("Wrong config")
         logging.error(f"Used wrong configuration file")
@@ -200,25 +177,36 @@ def main():
 
     if os.path.exists(reportfile):
         logging.info("Report alredy created")
+        return
+
+    lines = get_lines(my_log)
+    parsed = parse_line(lines)
+    collected_data = get_statistics(parsed)
+
+    result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
+    if result_replacement == 1:
+        logging.info("error percentage treshhold occured")
         sys.exit(1)
+    else:
+        render_report(reportfile, result_replacement)
+    logging.info("script done")
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', help='config path', default=DEFAULT_CONFIG)
+    args = parser.parse_args()
+
+    config = load_config(DEFAULT_CONFIG)
+    if args.config:
+        external_config = load_config(args.config)
+        config.update(external_config)
+
+    configure_logging(config["LOG_FILE"])
 
     try:
-        lines = get_lines(my_log)
-        parsed = parse_line(lines)
-        collected_data = get_statistics(parsed)
-
-        result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
-        if result_replacement == 1:
-            print("error percentage treshhold occured")
-            sys.exit(1)
-        else:
-            render_report(reportfile, result_replacement)
-
-        logging.info("script done")
-
-
+        main(config)
     except:
         logging.exception("fatal unexpected error")
 
-if __name__ == "__main__":
-    main()
