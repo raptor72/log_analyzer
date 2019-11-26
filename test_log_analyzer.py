@@ -42,12 +42,14 @@ class LogAnalyzerTest(unittest.TestCase):
 
     def test_get_statistics(self):
         dicted_diff = get_statistics(parse_line(lines_diff))
-        self.assertEqual(dicted_diff.__next__(), ({'GET /api/v2/banner/22911507 HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/20825304 HTTP/1.1': [1, 0.063, 0.063, 0.063, 2, [0.063]],
-                                              'GET /api/v2/banner/22913947 HTTP/1.1': [1, 0.065, 0.065, 0.065, 3, [0.065]]}, 0.189, 0))
+        self.assertEqual(dicted_diff, ({'GET /api/v2/banner/22911507 HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/20825304 HTTP/1.1': [1, 0.063, 0.063, 0.063, 2, [0.063]],
+                                        'GET /api/v2/banner/22913947 HTTP/1.1': [1, 0.065, 0.065, 0.065, 3, [0.065]]}, 0.189, 0))
+
         dicted_equal = get_statistics(parse_line(lines_equal))
-        self.assertEqual(dicted_equal.__next__(), ({'GET /api/v2/banner/HTTP/1.1': [3, 0.063, 0.065, 0.189, 3, [0.061, 0.063, 0.065]]}, 0.189, 0))
+        self.assertEqual(dicted_equal, ({'GET /api/v2/banner/HTTP/1.1': [3, 0.063, 0.065, 0.189, 3, [0.061, 0.063, 0.065]]}, 0.189, 0))
+
         dicted_both = get_statistics(parse_line(lines_both))
-        self.assertEqual(dicted_both.__next__(), ({'GET /api/v2/banner/1/HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/2/HTTP/1.1': [2, 0.064, 0.065, 0.128, 3, [0.063, 0.065]]}, 0.189, 0))
+        self.assertEqual(dicted_both, ({'GET /api/v2/banner/1/HTTP/1.1': [1, 0.061, 0.061, 0.061, 1, [0.061]], 'GET /api/v2/banner/2/HTTP/1.1': [2, 0.064, 0.065, 0.128, 3, [0.063, 0.065]]}, 0.189, 0))
 
 
     def test_handle_dict(self):
