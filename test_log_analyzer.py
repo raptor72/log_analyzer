@@ -21,6 +21,11 @@ lines_both = [
 '1.196.116.32 -  - [29/Jun/2017:03:52:44 +0300] "GET /api/v2/banner/2/HTTP/1.1" 200 576 "-" "Lynx/2.8.8dev.9 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/2.10.5" "-" "1498697564-2190034393-4708-9754324" "dc7161be3" 0.065',
 ]
 
+lines_err = [
+'1.196.116.32 -  - [29/Jun/2017:03:52:44 +0300] "GET /api/v2/banner/1/HTTP/1.1" 200 590 "-" "Lynx/2.8.8dev.9 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/2.10.5" "-" "1498697564-2190034393-4708-9754322" "dc7161be3" 0.061',
+'1.196.116.32 -  - [29/Jun/2017:03:52:44 +0300] "GET /api/v2/banner/2/HTTP/1.1" 200 739 "-" "Lynx/2.8.8dev.9 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/2.10.5" "-" "1498697564-2190034393-4708-9754318" "dc7161be3" 0.063',
+'1.196.116.32 -  - [29/Jun/2017:03:52:44 +0300] "GET /api/v2/banner/2/HTTP/1.1" 200 576 "-" "Lynx/2.8.8dev.9 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/2.10.5" "-" "1498697564-2190034393-4708-9754324" "dc7161be3"'
+]
 
 class LogAnalyzerTest(unittest.TestCase):
     def test_mediana(self):
@@ -72,6 +77,13 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertIn("nginx-access-ui.log-20191124.gz", get_last_log("./test_log/gz/").path)
         self.assertEqual("20191124", get_last_log("./test_log/gz/").date)
         self.assertEqual("gz", get_last_log("./test_log/gz/").extension)
+
+    def test_handle_dict_error_trashhold(self):
+        report_size = 0.06
+        dicted_err = get_statistics(parse_line(lines_err))
+        handled_err = handle_dict(dicted_err[0],  dicted_err[1], report_size, dicted_err[2])
+        self.assertEqual(handled_err, 1)
+
 
 
 if __name__ == '__main__':
