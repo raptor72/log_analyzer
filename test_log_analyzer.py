@@ -1,5 +1,6 @@
 
 import unittest
+import os
 from log_analyzer import *
 
 
@@ -26,6 +27,13 @@ lines_err = [
 '1.196.116.32 -  - [29/Jun/2017:03:52:44 +0300] "GET /api/v2/banner/2/HTTP/1.1" 200 739 "-" "Lynx/2.8.8dev.9 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/2.10.5" "-" "1498697564-2190034393-4708-9754318" "dc7161be3" 0.063',
 '1.196.116.32 -  - [29/Jun/2017:03:52:44 +0300] "GET /api/v2/banner/2/HTTP/1.1" 200 576 "-" "Lynx/2.8.8dev.9 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/2.10.5" "-" "1498697564-2190034393-4708-9754324" "dc7161be3"'
 ]
+
+gzip_list = ['nginx-access-ui.log-20191001.bz', 'nginx-access-ui.log-20191001.g', 'nginx-access-ui.log-20191001.gz', 'nginx-access-ui.log-20191001.gzz',
+             'nginx-access-ui.log-20191001.tar', 'nginx-access-ui.log-20191001.z', 'nginx-access-ui.log-20191001.zg', 'nginx-access-ui.log-201910011.gz',
+             'nginx-access-ui.log-2019101.gz', 'nginx-access-ui.log-20191124.gz', 'nginx-access-ui.log20191001gz', 'ngnix-access-ui.log-20191001.gz'
+             ]
+
+test_log_dir = './test_log'
 
 class LogAnalyzerTest(unittest.TestCase):
     def test_mediana(self):
@@ -73,10 +81,12 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual(len(handled_more), 0)
         self.assertEqual(len(handled_more_and_less), 1)
 
+
     def test_get_last_log(self):
-        self.assertIn("nginx-access-ui.log-20191124.gz", get_last_log("./test_log/gz/").path)
-        self.assertEqual("20191124", get_last_log("./test_log/gz/").date)
-        self.assertEqual("gz", get_last_log("./test_log/gz/").extension)
+        self.assertIn("nginx-access-ui.log-20191124.gz", get_last_log(test_log_dir).path)
+        self.assertEqual("20191124", get_last_log(test_log_dir).date)
+        self.assertEqual("gz", get_last_log(test_log_dir).extension)
+        delete_test_logs(test_log_dir)
 
     def test_handle_dict_error_trashhold(self):
         report_size = 0.06
@@ -84,7 +94,20 @@ class LogAnalyzerTest(unittest.TestCase):
         handled_err = handle_dict(dicted_err[0],  dicted_err[1], report_size, dicted_err[2])
         self.assertEqual(handled_err, 1)
 
+def create_test_logs(dir, file_list):
+    if not os.path.exists(dir):
+        os.mkdir(dir)
+    for file in file_list:
+        with open(os.path.join(dir, file), "w") as stuff:
+            stuff.write("")
 
+def delete_test_logs(dir):
+    for file in os.listdir(dir):
+        os.remove(os.path.join(dir, file))
+    if os.path.exists(dir):
+        os.rmdir(dir)
 
 if __name__ == '__main__':
+    create_test_logs(test_log_dir, gzip_list)
     unittest.main()
+

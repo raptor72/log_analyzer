@@ -1,6 +1,0 @@
-{
-"REPORT_SIZE": 10,
-"REPPORT_DIR": "./reports",
-"LOG_DIR": "./log",
-"LOG_FILE" : "./analyzer.log"
-}
