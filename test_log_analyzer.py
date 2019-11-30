@@ -35,6 +35,7 @@ gzip_list = ['nginx-access-ui.log-20191001.bz', 'nginx-access-ui.log-20191001.g'
 
 test_log_dir = './test_log'
 
+
 class LogAnalyzerTest(unittest.TestCase):
     def test_mediana(self):
         self.assertEqual(mediana([1, 2, 3]), 2)
@@ -88,6 +89,17 @@ class LogAnalyzerTest(unittest.TestCase):
         self.assertEqual("20191124", get_last_log(test_log_dir).date)
         self.assertEqual("gz", get_last_log(test_log_dir).extension)
         delete_test_logs(test_log_dir)
+
+
+    def test_get_last_log_uncorrect_path(self):
+        self.assertEqual(None, get_last_log('uncorrect_path'))
+
+
+    def test_get_last_log_empty_dir(self):
+        create_test_logs(test_log_dir, [])
+        self.assertEqual(None, get_last_log(test_log_dir))
+        delete_test_logs(test_log_dir)
+
 
     def test_handle_dict_error_trashhold(self):
         report_size = 0.06

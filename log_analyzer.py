@@ -34,25 +34,30 @@ def configure_logging(log_filename):
 
 
 def get_last_log(logdir):
-    if os.listdir(logdir):
-        last_date = datetime.date(1970, 1, 1).strftime('%Y%m%d')
-        pattern = re.compile('^nginx-access-ui.log-\d{8}($|.gz$)')
-        for file in os.listdir(logdir):
-            matched = pattern.findall(file)
-            if matched:
-                current_date = datetime.datetime.strptime( file.split("-")[-1].split(".")[0], '%Y%m%d').strftime('%Y%m%d')
-                if current_date > last_date:
-                    last_file = file
-                    last_date = current_date
-                    path = os.path.join( os.path.abspath(logdir), last_file)
-                    extension = "gz" if last_file.split(".")[-1] == "gz" else ""
-            else:
-                logging.debug("no log files matched")
-        logging.info(f"choised log file is {last_file}")
-        my_log = Lastlog(last_date, path, extension)
-        return my_log
-    else:
-        logging.info("no logs found")
+    try:
+        os.listdir(logdir)
+    except FileNotFoundError:
+        logging.info("Log directory does not exists")
+        return
+    if os.listdir(logdir) == []:
+        logging.info("Directory is empty")
+        return
+    last_date = datetime.date(1970, 1, 1).strftime('%Y%m%d')
+    pattern = re.compile('^nginx-access-ui.log-\d{8}($|.gz$)')
+    for file in os.listdir(logdir):
+        matched = pattern.findall(file)
+        if matched:
+            current_date = datetime.datetime.strptime( file.split("-")[-1].split(".")[0], '%Y%m%d').strftime('%Y%m%d')
+            if current_date > last_date:
+                last_file = file
+                last_date = current_date
+                path = os.path.join( os.path.abspath(logdir), last_file)
+                extension = "gz" if last_file.split(".")[-1] == "gz" else ""
+        else:
+            logging.debug("no log files matched")
+    logging.info(f"choised log file is {last_file}")
+    my_log = Lastlog(last_date, path, extension)
+    return my_log
 
 
 def parse_line(strings):
