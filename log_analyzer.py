@@ -67,13 +67,17 @@ def parse_line(strings):
         yield url, time
 
 
-def get_lines(file):
+def reader(file):
     if file.extension == ".gz":
-        log = gzip.open(file.path, 'r+')
+        return gzip.open(file.path, 'r+')
     else:
-        log = open(file.path, 'r+', encoding='utf-8')
-    for line in log:
-        yield str(line)
+        return open(file.path, 'r+', encoding='utf-8')
+
+
+def get_lines(reader):
+    with reader as f:
+        for line in f:
+            yield str(line)
 
 
 def r2(number):
@@ -183,13 +187,13 @@ def main(config):
         logging.info("Report alredy created")
         return
 
-    lines = get_lines(my_log)
+    lines = get_lines(reader(my_log))
     parsed = parse_line(lines)
     collected_data = get_statistics(parsed)
 
     result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
     if result_replacement == 1:
-        logging.info("error percentage treshhold occured")
+        logging.info("error percentage threshold occurred")
         sys.exit(1)
     else:
         render_report(reportfile, result_replacement)
