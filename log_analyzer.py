@@ -12,6 +12,7 @@ import datetime
 import statistics
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
+resulted_dict = namedtuple('resulted_dict', 'count, count_perc, time_avg, time_max, time_med, time_perc, time_sum, url')
 
 DEFAULT_CONFIG = './default_config'
 
@@ -123,7 +124,6 @@ def get_statistics(parsed_lines):
 
 def handle_dict(accumulated_dict, all_time, report_size, error_count = 0, error_percent = 0):
     res = []
-    sorted_list = []
     all_count = len(accumulated_dict)
     if error_count / all_count * 100 > error_percent:
         logging.info(f"Reach error threshold {str(error_count / all_count * 100)}")
@@ -132,23 +132,22 @@ def handle_dict(accumulated_dict, all_time, report_size, error_count = 0, error_
         pay = accumulated_dict[i]
         direct_count = pay[0]
         count_perc = direct_count / all_count * 100
-        time_row = pay.pop()
-        pay.pop()
-        time_med = statistics.median(time_row)
+        time_pack = pay.pop()
+        time_med = statistics.median(time_pack)
         time_perc = pay[3] / all_time * 100
-        pay.append(count_perc)
-        pay.append(time_med)
-        pay.append(time_perc)
         accumulated_dict[i] = pay
-    for i, j in accumulated_dict.items():
-        if j[3] < float(report_size): #time_sum
-            continue
-        else:
-            res.append( [i, *j])
-    for item in sorted(res, key=lambda x: x[3], reverse = True):
-        sorted_list.append({"count" : r2(item[1]), "count_perc": r2(item[5]), "time_avg": r2(item[3]), "time_max": r2(item[4]),
-                            "time_med": r2(item[6]), "time_perc": r2(item[7]), "time_sum": r2(item[4]), "url": item[0]})
-    return sorted_list
+        if pay[3] > float(report_size):
+            res.append(
+                {"count": direct_count,
+                 "count_perc": r2(count_perc),
+                 "time_avg": r2(pay[1]),
+                 "time_max": r2(pay[2]),
+                 "time_med": r2(time_med),
+                 "time_perc": r2(time_perc),
+                 "time_sum": r2(pay[3]),
+                 "url": i}
+            )
+    return sorted(res, key=lambda x: x["time_avg"], reverse=True)
 
 
 def render_report(reportfile, replacement):
@@ -183,6 +182,7 @@ def main(config):
     parsed = parse_line(lines)
     collected_data = get_statistics(parsed)
     result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
+#    print(result_replacement)
     if result_replacement == 1:
         logging.info("error percentage threshold occurred")
         sys.exit(1)
