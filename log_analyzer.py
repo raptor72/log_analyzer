@@ -2,7 +2,7 @@
 
 import os
 import re
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import gzip
 import sys
 import json
@@ -88,7 +88,7 @@ def r2(number):
 
 
 def get_statistics(parsed_lines):
-    accumulated_dict = {}
+    accumulated_dict = defaultdict(list)
     all_count = 0
     all_time = 0.0
     err_count = 0
@@ -97,11 +97,12 @@ def get_statistics(parsed_lines):
         try:
             time = float(strtime)
             all_time += time
+
             if accumulated_dict.get(url) is None:
                 time_pack = [time]
                 direct_count = 1
-                accumulated_dict.update({ url: [direct_count, time, time,
-                        time, all_count, time_pack]})
+                accumulated_dict[url].append([direct_count, time, time, time, all_count, time_pack])
+                accumulated_dict[url] = accumulated_dict[url][0]
             else:
                 payload = accumulated_dict.get(url)
                 direct_count = payload[0] + 1
@@ -116,7 +117,7 @@ def get_statistics(parsed_lines):
                 updated_payload = [direct_count, time_avg, time_max, time_sum, all_count, time_pack]
                 accumulated_dict[url] = updated_payload
         except:
-            err_count +=1
+            err_count += 1
     return accumulated_dict, all_time, err_count
 
 
@@ -181,7 +182,6 @@ def main(config):
     lines = get_lines(reader(my_log))
     parsed = parse_line(lines)
     collected_data = get_statistics(parsed)
-
     result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
     if result_replacement == 1:
         logging.info("error percentage threshold occurred")
@@ -189,7 +189,6 @@ def main(config):
     else:
         render_report(reportfile, result_replacement)
     logging.info("script done")
-
 
 
 if __name__ == "__main__":
