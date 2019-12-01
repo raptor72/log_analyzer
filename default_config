@@ -2,6 +2,6 @@
 "REPORT_SIZE": 25,
 "REPORT_DIR": "./reports",
 "LOG_DIR": "./log",
-"ERROR_PERCENT" : 25,
+"ERROR_PERCENT" : 40,
 "LOG_FILE" : "./log_analyzer.log"
 }

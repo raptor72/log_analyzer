@@ -62,10 +62,12 @@ def get_last_log(logdir):
 
 def parse_line(strings):
     for line in strings:
-        url = line.split('"')[1]
-        time = line.split(" ")[-1].replace("\n","").replace("\\n'", "")
-        yield url, time
-
+        try:
+            url = line.split('"')[1]
+            time = line.split(" ")[-1].replace("\n","").replace("\\n'", "")
+            yield url, time
+        except:
+            yield None, None
 
 def reader(file):
     if file.extension == ".gz":
@@ -172,7 +174,7 @@ def main(config):
     if config is None:
         logging.error(f"Used wrong configuration file")
         sys.exit(1)
-
+    logging.info(f"result config is: {config}")
     my_log = get_last_log(config["LOG_DIR"])
     if my_log is None:
         logging.info("no logs found")
