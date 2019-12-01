@@ -87,7 +87,7 @@ class LogAnalyzerTest(unittest.TestCase):
         create_test_logs(test_log_dir, gzip_list)
         self.assertIn("nginx-access-ui.log-20191124.gz", get_last_log(test_log_dir).path)
         self.assertEqual("20191124", get_last_log(test_log_dir).date)
-        self.assertEqual("gz", get_last_log(test_log_dir).extension)
+        self.assertEqual(".gz", get_last_log(test_log_dir).extension)
         delete_test_logs(test_log_dir)
 
 

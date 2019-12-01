@@ -52,7 +52,7 @@ def get_last_log(logdir):
                 last_file = file
                 last_date = current_date
                 path = os.path.join( os.path.abspath(logdir), last_file)
-                extension = "gz" if last_file.split(".")[-1] == "gz" else ""
+                extension = matched.groups()[1]
         else:
             logging.debug("no log files matched")
     logging.info(f"choised log file is {last_file}")
@@ -68,7 +68,7 @@ def parse_line(strings):
 
 
 def get_lines(file):
-    if file.extension == "gz":
+    if file.extension == ".gz":
         log = gzip.open(file.path, 'r+')
     else:
         log = open(file.path, 'r+', encoding='utf-8')
