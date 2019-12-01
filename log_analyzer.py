@@ -12,7 +12,6 @@ import datetime
 import statistics
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
-resulted_dict = namedtuple('resulted_dict', 'count, count_perc, time_avg, time_max, time_med, time_perc, time_sum, url')
 
 DEFAULT_CONFIG = './default_config'
 
@@ -182,7 +181,6 @@ def main(config):
     parsed = parse_line(lines)
     collected_data = get_statistics(parsed)
     result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
-#    print(result_replacement)
     if result_replacement == 1:
         logging.info("error percentage threshold occurred")
         sys.exit(1)
