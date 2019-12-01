@@ -37,9 +37,6 @@ test_log_dir = './test_log'
 
 
 class LogAnalyzerTest(unittest.TestCase):
-    def test_mediana(self):
-        self.assertEqual(mediana([1, 2, 3]), 2)
-        self.assertEqual(mediana([1, 2, 3, 4]), 2.5)
 
     def test_r2(self):
         self.assertEqual(r2( 1  ), 1.0)

@@ -9,6 +9,7 @@ import json
 import logging
 import argparse
 import datetime
+import statistics
 
 Lastlog = namedtuple('Lastlog', 'date path extension')
 
@@ -119,18 +120,6 @@ def get_statistics(parsed_lines):
     return accumulated_dict, all_time, err_count
 
 
-def mediana(data):
-    smass = sorted(data)
-    if len(data) % 2 == 0:
-        mid1 = (int(len(sorted(data)) / 2))
-        mid2 = (int(len(sorted(data)) / 2) - 1)
-        result = (smass[mid1] + smass[mid2]) / 2
-    else:
-        mid = (int(len(sorted(data)) / 2))
-        result = smass[mid]
-    return result
-
-
 def handle_dict(accumulated_dict, all_time, report_size, error_count = 0, error_percent = 0):
     res = []
     sorted_list = []
@@ -144,7 +133,7 @@ def handle_dict(accumulated_dict, all_time, report_size, error_count = 0, error_
         count_perc = direct_count / all_count * 100
         time_row = pay.pop()
         pay.pop()
-        time_med = mediana(time_row)
+        time_med = statistics.median(time_row)
         time_perc = pay[3] / all_time * 100
         pay.append(count_perc)
         pay.append(time_med)
