@@ -122,31 +122,30 @@ def get_statistics(parsed_lines):
 
 
 def handle_dict(accumulated_dict, all_time, report_size, error_count = 0, error_percent = 0):
-    res = []
+    result = []
     all_count = len(accumulated_dict)
     if error_count / all_count * 100 > error_percent:
         logging.info(f"Reach error threshold {str(error_count / all_count * 100)}")
         return 1
-    for i in accumulated_dict.keys():
-        pay = accumulated_dict[i]
-        direct_count = pay[0]
+    for url in accumulated_dict.keys():
+        payload = accumulated_dict[url]
+        direct_count = payload[0]
         count_perc = direct_count / all_count * 100
-        time_pack = pay.pop()
+        time_pack = payload.pop()
         time_med = statistics.median(time_pack)
-        time_perc = pay[3] / all_time * 100
-        accumulated_dict[i] = pay
-        if pay[3] > float(report_size):
-            res.append(
+        time_perc = payload[3] / all_time * 100
+        if payload[3] > float(report_size):
+            result.append(
                 {"count": direct_count,
                  "count_perc": r2(count_perc),
-                 "time_avg": r2(pay[1]),
-                 "time_max": r2(pay[2]),
+                 "time_avg": r2(payload[1]),
+                 "time_max": r2(payload[2]),
                  "time_med": r2(time_med),
                  "time_perc": r2(time_perc),
-                 "time_sum": r2(pay[3]),
-                 "url": i}
+                 "time_sum": r2(payload[3]),
+                 "url": url}
             )
-    return sorted(res, key=lambda x: x["time_avg"], reverse=True)
+    return sorted(result, key=lambda x: x["time_avg"], reverse=True)
 
 
 def render_report(reportfile, replacement):
