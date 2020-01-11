@@ -70,15 +70,10 @@ def parse_line(strings):
         except:
             yield None, None
 
-def reader(file):
-    if file.extension == ".gz":
-        return gzip.open(file.path, 'r+')
-    else:
-        return open(file.path, 'r+', encoding='utf-8')
 
-
-def get_lines(reader):
-    with reader as f:
+def get_lines(file):
+    func = gzip.open(file.path, 'r+') if file.extension == ".gz" else open(file.path, 'r+', encoding='utf-8')
+    with func as f:
         for line in f:
             yield str(line)
 
@@ -176,7 +171,7 @@ def main(config):
         logging.info("Report alredy created")
         return
 
-    lines = get_lines(reader(my_log))
+    lines = get_lines(my_log)
     parsed = parse_line(lines)
     collected_data = get_statistics(parsed)
     result_replacement = handle_dict(collected_data[0], collected_data[1], config["REPORT_SIZE"], collected_data[2], config["ERROR_PERCENT"])
