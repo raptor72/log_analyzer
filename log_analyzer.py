@@ -35,9 +35,7 @@ def configure_logging(log_filename):
 
 
 def get_last_log(logdir):
-    try:
-        os.listdir(logdir)
-    except FileNotFoundError:
+    if not os.path.exists(logdir):
         logging.info("Log directory does not exists")
         return
     if os.listdir(logdir) == []:
