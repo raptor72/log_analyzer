@@ -41,13 +41,15 @@ def get_last_log(logdir):
     if not os.listdir(logdir):
         logging.info("Directory is empty")
         return
-    last_date = datetime.date(1970, 1, 1).strftime('%Y%m%d')
+    last_date = None
     pattern = re.compile('^nginx-access-ui.log-(\d{8})($|.gz$)')
     for file in os.listdir(logdir):
         matched = pattern.match(file)
         if matched:
             current_date = datetime.datetime.strptime(matched.groups()[0], '%Y%m%d').strftime('%Y%m%d')
-            if current_date > last_date:
+            if not last_date:
+                last_date = current_date
+            if current_date >= last_date:
                 last_file = file
                 last_date = current_date
                 path = os.path.join( os.path.abspath(logdir), last_file)
