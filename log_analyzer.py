@@ -38,7 +38,7 @@ def get_last_log(logdir):
     if not os.path.exists(logdir):
         logging.info("Log directory does not exists")
         return
-    if os.listdir(logdir) == []:
+    if not os.listdir(logdir):
         logging.info("Directory is empty")
         return
     last_date = datetime.date(1970, 1, 1).strftime('%Y%m%d')
