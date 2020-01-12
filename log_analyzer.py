@@ -153,12 +153,9 @@ def render_report(reportfile, replacement):
 
 def main(config):
     logging.info("script started")
-    if config is None:
-        logging.error(f"Used wrong configuration file")
-        sys.exit(1)
     logging.info(f"result config is: {config}")
     my_log = get_last_log(config["LOG_DIR"])
-    if my_log is None:
+    if not my_log:
         logging.info("no logs found")
         sys.exit(0)
     reportname = (f"report{my_log.date}.html")
@@ -194,9 +191,10 @@ if __name__ == "__main__":
         config.update(external_config)
 
     configure_logging(config["LOG_FILE"])
-
-    try:
-        main(config)
-    except:
-        logging.exception("fatal unexpected error")
-
+    if len(config) == 5:
+        try:
+            main(config)
+        except:
+            logging.exception("fatal unexpected error")
+    else:
+        logging.error(f"Used wrong configuration file")
