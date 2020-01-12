@@ -72,7 +72,7 @@ def parse_line(strings):
 
 
 def get_lines(file):
-    func = gzip.open(file.path, 'r+') if file.extension == ".gz" else open(file.path, 'r+', encoding='utf-8')
+    func = gzip.open(file.path, 'rt', encoding='utf-8') if file.extension == ".gz" else open(file.path, 'r+', encoding='utf-8')
     with func as f:
         for line in f:
             yield str(line)
