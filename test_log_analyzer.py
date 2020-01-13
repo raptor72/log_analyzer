@@ -101,8 +101,10 @@ class LogAnalyzerTest(unittest.TestCase):
     def test_handle_dict_error_trashhold(self):
         report_size = 0.06
         dicted_err = get_statistics(parse_line(lines_err))
-        handled_err = handle_dict(dicted_err[0],  dicted_err[1], report_size, dicted_err[2])
-        self.assertEqual(handled_err, 1)
+        with self.assertRaises(Exception) as context:
+            handle_dict(dicted_err[0],  dicted_err[1], report_size, dicted_err[2])
+        self.assertTrue('error percentage threshold occurred' in str(context.exception))
+
 
 def create_test_logs(dir, file_list):
     if not os.path.exists(dir):
